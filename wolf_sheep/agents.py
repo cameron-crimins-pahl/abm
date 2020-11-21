@@ -1,6 +1,6 @@
 from mesa import Agent
-from random_walk import RandomWalker
-# from wolf_sheep.random_walk import RandomWalker
+# from random_walk import RandomWalker
+from wolf_sheep.random_walk import RandomWalker
 
 
 import pandas as pd
@@ -71,6 +71,11 @@ class Sheep(RandomWalker):
 
         self.age = len(da.index)
 
+        if len(da.index>0):
+            rprd = "true"
+        else:
+            rprd="false"
+
         # print(self.pos)
         #
         # print(self.age)
@@ -84,7 +89,7 @@ class Sheep(RandomWalker):
         # self.random_move()
         living = True
         nrg = self.energy
-        rprd="false"
+        # rprd="false"
 
         self.energy *= decay_equation(self.age)
 
@@ -125,23 +130,26 @@ class Sheep(RandomWalker):
             # Death
 
 
-        if living and self.random.random() < self.model.sheep_reproduce:
+        print(da["reproduced"].tolist())
+
+        if rprd in ["false"] or "false" in da["reproduced"].tolist():
+
+            """if the carcass hasn't reproduced yet, make a new carcass
+               otherwise collect the data and do nothing"""
 
             rprd="true"
             # Create a new sheep:
+            """if each sheep reproduces 1 time, and i start with 4 sheep, it will
+                add only 4 sheep per step.  the existing sheep will decay and die."""
+
             """i might need to make this produce like 2 carcasses per day
                based on 100k kg average carrion production per day.
                if only 5 die every year
 
-               if 1.5 animals died at 45kg each, that would be avg 180kg per day
+               if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
                I'll need to do it this way to demonstrate algebraic supply demand
                but
                """
-            if self.model.grass:
-                self.energy /= 2
-
-
-
             # self.nwnrg = random.randrange(20000,45000)
 
             # print(self.nwnrg)
@@ -188,6 +196,14 @@ class Wolf(RandomWalker):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
 
+        # if self.energy>45000:
+        #     self.energy =45000
+        """how much energy should the wolves start with?
+           should it be 1000? 1 energy per kg as i did with sauropods? no, because they could go 100 days without food
+           no way.  60 seems better, they have 6 days to find and reach a carcass.
+           i could add math about how much meat is converted to energy, 90% or whatever... i don't know.
+           60 seems right but i think it is because it seems like these animals were always on the verge of starvation"""
+        self.energy +=60
 
     def step(self):
 
@@ -210,7 +226,9 @@ class Wolf(RandomWalker):
         """ it costs self.energy to move"""
 
         x, y = self.pos
-
+        """radius = 10 km because
+           komodo dragons can smell carcasses 10km away
+           brown bears may be at 20km but email here for sources: heiko jansen bear smell"""
         this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=10)
         # this_cell = self.model.grid.get_cell_list_contents([self.pos])
 
@@ -291,7 +309,9 @@ class Wolf(RandomWalker):
                 """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
                 self.energy /= 2
 
-                cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, self.energy)
+                """new wolves start with 1+50 energy"""
+
+                cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
                 self.model.grid.place_agent(cub, cub.pos)
 

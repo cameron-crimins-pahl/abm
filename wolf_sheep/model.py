@@ -13,12 +13,12 @@ from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 
-from agents import Sheep, Wolf, GrassPatch
-from schedule import RandomActivationByBreed
+# from agents import Sheep, Wolf, GrassPatch
+# from schedule import RandomActivationByBreed
 # import agents
 #
-# from wolf_sheep.agents import Sheep, Wolf, GrassPatch
-# from wolf_sheep.schedule import RandomActivationByBreed
+from wolf_sheep.agents import Sheep, Wolf, GrassPatch
+from wolf_sheep.schedule import RandomActivationByBreed
 
 
 class WolfSheep(Model):
@@ -54,8 +54,8 @@ class WolfSheep(Model):
         to check this with olfaction in allosaurs. but this is good.
         now i need to know how many carcasses would reasonably appear per year in a 200x200 sized space
         since 1-2 sauropods could have existed per square km in the most conservative estimates, that means
-        a 40,000 square km space could have supported 80,000 sauropods, which means 24,000 adults if 30% were adults.
-        at 5% mortality that would be 1200 carcasses/year, or 3.2 per day at a constant rate, or 1.6 per day
+        a 40,000 square km space could have supported 40,000-80,000 sauropods. Which means 12000- 24,000 adults if 30% were adults.
+        at 5% mortality that would be 600- 1200 carcasses/year. That is 3.2 per day at a constant rate, or 1.6 per day
         if the population was half as dense.
         I need to do this linearly, but also seasonally, which means I should do a dry season death with 80% of
         casualties in a 3 month time span, then 20% spread through the rest of the year."""
