@@ -13,12 +13,12 @@ from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 
-# from agents import Sheep, Wolf, GrassPatch
-# from schedule import RandomActivationByBreed
+from agents import Sheep, Wolf, GrassPatch
+from schedule import RandomActivationByBreed
 # import agents
-
-from wolf_sheep.agents import Sheep, Wolf, GrassPatch
-from wolf_sheep.schedule import RandomActivationByBreed
+#
+# from wolf_sheep.agents import Sheep, Wolf, GrassPatch
+# from wolf_sheep.schedule import RandomActivationByBreed
 
 
 class WolfSheep(Model):
@@ -192,5 +192,5 @@ if __name__=="__main__":
                     "grass_regrowth_time":[30],
                     "sheep_gain_from_food":[4]}
 
-    ws = WolfSheep()
-    ws.run_model()
+    md = WolfSheep()
+    md.step()

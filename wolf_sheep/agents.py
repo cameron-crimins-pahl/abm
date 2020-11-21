@@ -1,6 +1,6 @@
 from mesa import Agent
-# from random_walk import RandomWalker
-from wolf_sheep.random_walk import RandomWalker
+from random_walk import RandomWalker
+# from wolf_sheep.random_walk import RandomWalker
 
 
 import pandas as pd
