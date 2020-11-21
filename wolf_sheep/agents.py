@@ -1,6 +1,6 @@
 from mesa import Agent
-from random_walk import RandomWalker
-# from wolf_sheep.random_walk import RandomWalker
+# from random_walk import RandomWalker
+from wolf_sheep.random_walk import RandomWalker
 
 
 import pandas as pd
@@ -65,7 +65,7 @@ class Sheep(RandomWalker):
 
 
 
-        data = pd.read_csv("/Users/cameronpahl/projects/abm-core/sheep_data_sheet.csv")
+        data = pd.read_csv("sheep_data_sheet.csv")
 
         da = data[data["unique_id"]==self.unique_id]
 
@@ -302,8 +302,8 @@ class Wolf(RandomWalker):
         dkt= {"adjacent_sheep"  :[str(len(sheep))]
             , "unique_id"       :[str(self.unique_id)]
             , "initial_energy"  :[str(nrg)]
-            ,"resulting_energy" :[str(nw_nrg)]
-            ,"reproduced"       :[str(rprd)]}
+            , "resulting_energy" :[str(nw_nrg)]
+            , "reproduced"       :[str(rprd)]}
 
         dfx = pd.DataFrame(dkt)
         # print("DFX")

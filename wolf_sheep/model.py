@@ -13,12 +13,12 @@ from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 
-from agents import Sheep, Wolf, GrassPatch
-from schedule import RandomActivationByBreed
+# from agents import Sheep, Wolf, GrassPatch
+# from schedule import RandomActivationByBreed
 # import agents
 
-# from wolf_sheep.agents import Sheep, Wolf, GrassPatch
-# from wolf_sheep.schedule import RandomActivationByBreed
+from wolf_sheep.agents import Sheep, Wolf, GrassPatch
+from wolf_sheep.schedule import RandomActivationByBreed
 
 
 class WolfSheep(Model):
@@ -47,7 +47,18 @@ class WolfSheep(Model):
     description = (
         """A model for simulating wolf and sheep (consumer-resource) ecosystem modelling.
         Note height and width determine the height and width of the environment, which is separate from the
-        params in server.py line 45 . They need to be the same numbers. If this is 100 x 100, then the server.py params must be 100x100  """
+        params in server.py line 45 . They need to be the same numbers. If this is 100 x 100, then the server.py params must be 100x100
+
+        my dad says 100x100 could reasonably be 100km by 100km, but even 200km by 200km. He suggested that
+        a reasonable allosaur could easily travel 1 or more km per day and could smell a gigantic carcass from 2-10km away, i need
+        to check this with olfaction in allosaurs. but this is good.
+        now i need to know how many carcasses would reasonably appear per year in a 200x200 sized space
+        since 1-2 sauropods could have existed per square km in the most conservative estimates, that means
+        a 40,000 square km space could have supported 80,000 sauropods, which means 24,000 adults if 30% were adults.
+        at 5% mortality that would be 1200 carcasses/year, or 3.2 per day at a constant rate, or 1.6 per day
+        if the population was half as dense.
+        I need to do this linearly, but also seasonally, which means I should do a dry season death with 80% of
+        casualties in a 3 month time span, then 20% spread through the rest of the year."""
     )
 
     def __init__(
