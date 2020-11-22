@@ -212,6 +212,7 @@ class Wolf(RandomWalker):
            starvation physiology:
            https://www.sciencedirect.com/science/article/pii/S109564331000005X?casa_token=ZrU6VR5dfeYAAAAA:1fRVw4gypP82tqjz72Rwuo6E160PMW_2ocdHRRnjSTMClCJCHklwaQIGjZXROQkqJco_ZBzIEQ
            section 1.3
+           also for bird and mammal physiology they can only go like 5 days wihtout food, arbitrary but good
 
            """
 
