@@ -71,14 +71,6 @@ class Sheep(RandomWalker):
 
         self.age = len(da.index)
 
-        if len(da.index>0):
-            rprd = "true"
-        else:
-            rprd="false"
-
-        # print(self.pos)
-        #
-        # print(self.age)
 
         """
         A model step. Move, then eat grass and reproduce.
@@ -88,6 +80,7 @@ class Sheep(RandomWalker):
         """
         # self.random_move()
         living = True
+
         nrg = self.energy
         # rprd="false"
 
@@ -110,7 +103,7 @@ class Sheep(RandomWalker):
 
             """9000 kg is 20% of the original mass of the carcass
                when it becomes effectively useless to local animals.
-               it is mostly bones and inedible elements at that point
+               At that point, it is mostly bones and inedible elements
                """
 
             self.model.grid._remove_agent(self.pos, self)
@@ -131,8 +124,10 @@ class Sheep(RandomWalker):
 
 
         print(da["reproduced"].tolist())
+        rprd = "false"
+        print(self.age)
 
-        if rprd in ["false"] or "false" in da["reproduced"].tolist():
+        if self.age == 1:
 
             """if the carcass hasn't reproduced yet, make a new carcass
                otherwise collect the data and do nothing"""
@@ -199,11 +194,28 @@ class Wolf(RandomWalker):
         # if self.energy>45000:
         #     self.energy =45000
         """how much energy should the wolves start with?
-           should it be 1000? 1 energy per kg as i did with sauropods? no, because they could go 100 days without food
-           no way.  60 seems better, they have 6 days to find and reach a carcass.
-           i could add math about how much meat is converted to energy, 90% or whatever... i don't know.
-           60 seems right but i think it is because it seems like these animals were always on the verge of starvation"""
-        self.energy +=60
+           should it be 1000 kg? yes
+           and depending on metabolism
+
+           okay so this is good: a monitor lizard loses 0.2 % of its mass every day it goes without eating
+           after 168 days of no food, it dies, having lost 29% of its body mass.
+
+           i need to check this citation. if 0.2% of body mass is near its FMR ,
+
+           i think if the allosaur gets to 70% body mass as an ectotherm, it dies.
+           that is pretty generous so i should do this with a range of values... even if it could only go 10 days wihtout food it dies
+
+           this is another great citation
+           Huitu, O.; Koivula, M.; Korpimäki, E.; Klemola, T. & Norrdahl, K. (2003) “Winter food supply limits growth of northern vale populations in the absence of predation”, Ecology, 84, pp. 2108-2118.
+
+           this paper is outstanding:
+           starvation physiology:
+           https://www.sciencedirect.com/science/article/pii/S109564331000005X?casa_token=ZrU6VR5dfeYAAAAA:1fRVw4gypP82tqjz72Rwuo6E160PMW_2ocdHRRnjSTMClCJCHklwaQIGjZXROQkqJco_ZBzIEQ
+           section 1.3
+
+           """
+
+        self.energy +=1000
 
     def step(self):
 
@@ -225,10 +237,18 @@ class Wolf(RandomWalker):
         nrg = self.energy
         """ it costs self.energy to move"""
 
+        data = pd.read_csv("wolf_data_sheet.csv")
+
+        da = data[data["unique_id"]==self.unique_id]
+
+        self.age = len(da.index)
+
         x, y = self.pos
+
         """radius = 10 km because
            komodo dragons can smell carcasses 10km away
-           brown bears may be at 20km but email here for sources: heiko jansen bear smell"""
+           brown bears may be at 20km but email here for sources: heiko jansen bear smell
+           the other thing is that giant rotting sauropods must have smelled awful"""
         this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=10)
         # this_cell = self.model.grid.get_cell_list_contents([self.pos])
 
@@ -295,21 +315,27 @@ class Wolf(RandomWalker):
 
         # Death or reproduction
         rprd = "false"
-        if self.energy < 0:
+
+        """ if the reptile allosaur's body mass drops by 30%, it dies.
+            just as in monitor lizards"""
+        if self.energy < 700:
+
             self.model.grid._remove_agent(self.pos, self)
+
             self.model.schedule.remove(self)
 
         else:
             """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
                 or
                 reproduce if step is between 275-280 for breeding season"""
-            if self.energy > 200:
+
+            if self.model.schedule.time > 275 and self.model.schedule.time < 280:
             # if self.random.random() < self.model.wolf_reproduce:
                 # Create a new wolf cub
                 """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-                self.energy /= 2
+                self.energy *= 0.85
 
-                """new wolves start with 1+50 energy"""
+                """new wolves start with 1+1000 energy"""
 
                 cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
@@ -323,7 +349,9 @@ class Wolf(RandomWalker):
             , "unique_id"       :[str(self.unique_id)]
             , "initial_energy"  :[str(nrg)]
             , "resulting_energy" :[str(nw_nrg)]
-            , "reproduced"       :[str(rprd)]}
+            , "reproduced"       :[str(rprd)]
+            ,"step_no"           :[str(self.model.schedule.time)]
+            ,"age"               :[str(self.age)]}
 
         dfx = pd.DataFrame(dkt)
         # print("DFX")

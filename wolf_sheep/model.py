@@ -183,8 +183,8 @@ if __name__=="__main__":
 
     parameters=    {"height":[100],
                     "width":[100],
-                    "initial_sheep":[100],
-                    "initial_wolves":[50],
+                    "initial_sheep":[3],
+                    "initial_wolves":[10],
                     "sheep_reproduce":[0.04],
                     "wolf_reproduce":[0.05],
                     "wolf_gain_from_food":[20],
