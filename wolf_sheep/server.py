@@ -53,13 +53,13 @@ model_params = {
         "slider", "Grass Regrowth Time", 20, 1, 50
     ),
     "initial_sheep": UserSettableParameter(
-        "slider", "Initial Sheep Population", 100, 10, 300
+        "slider", "Initial Sheep Population", 100, 1, 300
     ),
     "sheep_reproduce": UserSettableParameter(
         "slider", "Sheep Reproduction Rate", 0.04, 0.01, 1.0, 0.01
     ),
     "initial_wolves": UserSettableParameter(
-        "slider", "Initial Wolf Population", 50, 10, 300
+        "slider", "Initial Wolf Population", 50, 1, 300
     ),
     "wolf_reproduce": UserSettableParameter(
         "slider",

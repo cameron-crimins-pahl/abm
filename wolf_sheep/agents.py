@@ -1,6 +1,6 @@
 from mesa import Agent
-# from random_walk import RandomWalker
-from wolf_sheep.random_walk import RandomWalker
+from random_walk import RandomWalker
+# from wolf_sheep.random_walk import RandomWalker
 
 
 import pandas as pd
@@ -99,7 +99,7 @@ class Sheep(RandomWalker):
 
         wlvs = [obj for obj in this_cell if isinstance(obj, Wolf)]
 
-        if self.energy < 9000:
+        if self.energy < 20000:
 
             """9000 kg is 20% of the original mass of the carcass
                when it becomes effectively useless to local animals.
@@ -202,8 +202,27 @@ class Wolf(RandomWalker):
 
            i need to check this citation. if 0.2% of body mass is near its FMR ,
 
-           i think if the allosaur gets to 70% body mass as an ectotherm, it dies.
+           i think if the allosaur gets to 70% body mass as an ectotherm, it dies -- this might require math about how much energy is stored
+           with each consumption event... 90% energy or whatever for carnivores.  That could also be weird because the math
+           would be tough to bring above 1000 maybe?  it might be more complicated than I want to do on this round.
+
+           edit = i could possibly get raound this by setting a maximum mass on the allosaur side of things.  Maybe they hit a max mass between
+           1750 and 2000, and then have a heritability component associated with size.
+
+           Gene A - max between 1500 and 1750,
+           Gene B - max between 1600 and 2200 kg.
+           make their energy needs conditional within each object based on Nagy
+
+           Gene C - 35% chance to kill on contact of living sauropod 25% to be killed, rest of % draw
+           Gene D - 25% chance to kill on contact of living sauropod 35% to be killed, rest of % draw
+
+           no -- if the animal goes 10 consecutive days without eating it dies or if it gets to below 0 energy
            that is pretty generous so i should do this with a range of values... even if it could only go 10 days wihtout food it dies
+
+           the more i think about this, the more the 70% body mass thing sounds good because starvation conditions are common in nature.
+           The only drawback is that if I argue the sauropods died of starvation as a primary cause of mortality, would they have less than adult mass?
+           they fattened up during good times and starved it out during bad times.  I also think that if I write seasonality component, the allosaurs
+           will need a. size
 
            this is another great citation
            Huitu, O.; Koivula, M.; Korpimäki, E.; Klemola, T. & Norrdahl, K. (2003) “Winter food supply limits growth of northern vale populations in the absence of predation”, Ecology, 84, pp. 2108-2118.
@@ -216,7 +235,7 @@ class Wolf(RandomWalker):
 
            """
 
-        self.energy +=1000
+        self.energy +=100
 
     def step(self):
 
@@ -319,7 +338,7 @@ class Wolf(RandomWalker):
 
         """ if the reptile allosaur's body mass drops by 30%, it dies.
             just as in monitor lizards"""
-        if self.energy < 700:
+        if self.energy < 2:
 
             self.model.grid._remove_agent(self.pos, self)
 
@@ -328,15 +347,17 @@ class Wolf(RandomWalker):
         else:
             """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
                 or
-                reproduce if step is between 275-280 for breeding season"""
+                reproduce if step is between 275-280 for breeding season
+                all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
+                sounds dumb"""
 
-            if self.model.schedule.time > 275 and self.model.schedule.time < 280:
+            if self.model.schedule.time in [90,180,275,420,560,720]:
             # if self.random.random() < self.model.wolf_reproduce:
                 # Create a new wolf cub
                 """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-                self.energy *= 0.85
+                self.energy *= 0.35
 
-                """new wolves start with 1+1000 energy"""
+                """new wolves start with 1+x energy"""
 
                 cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
