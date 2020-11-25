@@ -13,14 +13,14 @@ from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 
-from agents import Sheep, Wolf, GrassPatch
-from schedule import RandomActivationByBreed
-import agents
+# from agents import Sheep, Wolf, GrassPatch
+# from schedule import RandomActivationByBreed
+# import agents
 
 
 # #
-# from wolf_sheep.agents import Sheep, Wolf, GrassPatch
-# from wolf_sheep.schedule import RandomActivationByBreed
+from wolf_sheep.agents import Sheep, Wolf, GrassPatch
+from wolf_sheep.schedule import RandomActivationByBreed
 
 
 class WolfSheep(Model):
@@ -32,8 +32,8 @@ class WolfSheep(Model):
     height = 20
     width = 20
 
-    initial_sheep = 100
-    initial_wolves = 50
+    initial_sheep = 10
+    initial_wolves = 20
 
     sheep_reproduce = 0.04
     wolf_reproduce = 0.05
@@ -44,12 +44,17 @@ class WolfSheep(Model):
     grass_regrowth_time = 30
     sheep_gain_from_food = 4
 
-    verbose = True  # Print-monitoring
+    verbose = False  # Print-monitoring
 
     description = (
         """A model for simulating wolf and sheep (consumer-resource) ecosystem modelling.
         Note height and width determine the height and width of the environment, which is separate from the
         params in server.py line 45 . They need to be the same numbers. If this is 100 x 100, then the server.py params must be 100x100
+
+        100x100 = 10k sauropods at 1/km.
+                    3000 adults = 150 die / year
+                                    0.41 / day
+
 
         my dad says 100x100 could reasonably be 100km by 100km, but even 200km by 200km. He suggested that
         a reasonable allosaur could easily travel 1 or more km per day and could smell a gigantic carcass from 2-10km away, i need
@@ -67,8 +72,8 @@ class WolfSheep(Model):
         self,
         height=100,
         width=100,
-        initial_sheep=100,
-        initial_wolves=50,
+        initial_sheep=9,
+        initial_wolves=40,
         sheep_reproduce=0.04,
         wolf_reproduce=0.05,
         wolf_gain_from_food=20,
@@ -181,21 +186,25 @@ class WolfSheep(Model):
 
 if __name__=="__main__":
 
+    # md = WolfSheep()
+    #
+    # md.step()
+
 
     # agents.function_test()
 
-    parameters=    {"height":[100],
-                    "width":[100],
-                    "initial_sheep":[3],
-                    "initial_wolves":[10],
-                    "sheep_reproduce":[0.04],
-                    "wolf_reproduce":[0.05],
-                    "wolf_gain_from_food":[20],
-                    "grass":"False",
-                    "grass_regrowth_time":[30],
-                    "sheep_gain_from_food":[4]}
-
+    # parameters=    {"height":[100],
+    #                 "width":[100],
+    #                 "initial_sheep":[3],
+    #                 "initial_wolves":[10],
+    #                 "sheep_reproduce":[0.04],
+    #                 "wolf_reproduce":[0.05],
+    #                 "wolf_gain_from_food":[20],
+    #                 "grass":"False",
+    #                 "grass_regrowth_time":[30],
+    #                 "sheep_gain_from_food":[4]}
+    #
     md = WolfSheep()
-
-    for itms in range(3):
+    #
+    for itms in range(365):
         md.step()

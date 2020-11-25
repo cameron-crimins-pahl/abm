@@ -1,9 +1,10 @@
 from mesa import Agent
-from random_walk import RandomWalker
-# from wolf_sheep.random_walk import RandomWalker
+# from random_walk import RandomWalker
+from wolf_sheep.random_walk import RandomWalker
 
 
 import pandas as pd
+import numpy as np
 import os
 from os import path
 import math
@@ -62,6 +63,11 @@ class Sheep(RandomWalker):
 
             return rep/100
 
+        def carcs_per_day(n,dys):
+            return n/dys
+
+
+
 
 
 
@@ -99,7 +105,7 @@ class Sheep(RandomWalker):
 
         wlvs = [obj for obj in this_cell if isinstance(obj, Wolf)]
 
-        if self.energy < 20000:
+        if self.energy < np.random.uniform(0,15000):
 
             """9000 kg is 20% of the original mass of the carcass
                when it becomes effectively useless to local animals.
@@ -110,57 +116,62 @@ class Sheep(RandomWalker):
             self.model.schedule.remove(self)
             living = False
 
-        if self.model.grass:
-            # Reduce energy by a certain amount
-
-            # If there is grass available, eat it
-            this_cell = self.model.grid.get_cell_list_contents([self.pos])
-            grass_patch = [obj for obj in this_cell if isinstance(obj, GrassPatch)][0]
-            if grass_patch.fully_grown:
-                self.energy += self.model.sheep_gain_from_food
-                grass_patch.fully_grown = False
+        # if self.model.grass:
+        #     # Reduce energy by a certain amount
+        #
+        #     # If there is grass available, eat it
+        #     this_cell = self.model.grid.get_cell_list_contents([self.pos])
+        #     grass_patch = [obj for obj in this_cell if isinstance(obj, GrassPatch)][0]
+        #     if grass_patch.fully_grown:
+        #         self.energy += self.model.sheep_gain_from_food
+        #         grass_patch.fully_grown = False
 
             # Death
 
 
-        print(da["reproduced"].tolist())
+        # print(da["reproduced"].tolist())
         rprd = "false"
-        print(self.age)
+        print("sheep schedule time 134")
+        print(self.model.schedule.time)
+        days = self.model.schedule.time
+        nt = data["unique_id"].nunique()
+        print("unique ids:",nt)
 
-        if self.age == 1:
+        """if total number of created carcasses / steps is greater than 1.3,
+        do nothing,
+        else make a new carcass"""
+        if days > 0:
 
-            """if the carcass hasn't reproduced yet, make a new carcass
-               otherwise collect the data and do nothing"""
+            print(carcs_per_day(nt,days))
 
-            rprd="true"
-            # Create a new sheep:
-            """if each sheep reproduces 1 time, and i start with 4 sheep, it will
-                add only 4 sheep per step.  the existing sheep will decay and die."""
+            if carcs_per_day(nt,days) < .82:
 
-            """i might need to make this produce like 2 carcasses per day
-               based on 100k kg average carrion production per day.
-               if only 5 die every year
+                print("CARCS PER DAY")
+                print(carcs_per_day(nt,days))
 
-               if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
-               I'll need to do it this way to demonstrate algebraic supply demand
-               but
-               """
-            # self.nwnrg = random.randrange(20000,45000)
+                """if the carcass hasn't reproduced yet, make a new carcass
+                   otherwise collect the data and do nothing"""
 
-            # print(self.nwnrg)
+                rprd="true"
 
-            lamb = Sheep(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
-            nx = random.randrange(100)
-            ny = random.randrange(100)
+                """i might need to make this produce like 2 carcasses per day
+                   based on 100k kg average carrion production per day.
+                   if only 5 die every year
 
-            self.npos = (nx,ny)
+                   if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
+                   I'll need to do it this way to demonstrate algebraic supply demand
+                   but
+                   """
+                # self.nwnrg = random.randrange(20000,45000)
 
-            print(self.npos)
+                nx = random.randrange(100)
+                ny = random.randrange(100)
 
-            self.model.grid.place_agent(lamb, self.npos)
-
-            self.model.schedule.add(lamb)
+                self.npos = (nx,ny)
+                lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
+                self.model.grid.place_agent(lamb, self.npos)
+                self.model.schedule.add(lamb)
 
         dst= {"consuming_wolves"  :[str(len(wlvs))]
             , "unique_id"         :[str(self.unique_id)]
@@ -171,13 +182,11 @@ class Sheep(RandomWalker):
             ,"age"                :[str(self.age)]}
 
         dsx = pd.DataFrame(dst)
-        # print("DFX")
-        # print(dsx)
         dsx.to_csv("sheep_data_sheet.csv",mode="a",header=False)
-
-
         dfs.append(dsx, ignore_index=True)
-        # dfs.to_csv("sheep_data_sheet.csv",mode="a")
+
+
+
 
 
 class Wolf(RandomWalker):
@@ -190,6 +199,10 @@ class Wolf(RandomWalker):
     def __init__(self, unique_id, pos, model, moore, energy=None):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
+
+        """i think my math is WAAAY wrong.
+           i think my carcass generation freq needs to be changed to
+           or maybe i roll the dice to say odds of carcass duplicating are 3 in 365"""
 
         # if self.energy>45000:
         #     self.energy =45000
@@ -236,6 +249,7 @@ class Wolf(RandomWalker):
            """
 
         self.energy +=100
+        """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
 
     def step(self):
 
@@ -305,7 +319,9 @@ class Wolf(RandomWalker):
             # print(sheep_to_eat)
             #
             # print("SHEEP TO TARGET COORDINATES:")
+            # print(self.pos)
             # print(sheep_to_eat.pos)
+
 
             to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
 
@@ -351,11 +367,12 @@ class Wolf(RandomWalker):
                 all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
                 sounds dumb"""
 
-            if self.model.schedule.time in [90,180,275,420,560,720]:
+            if self.model.schedule.time in [30,90,180,275,320,420]:
+
             # if self.random.random() < self.model.wolf_reproduce:
                 # Create a new wolf cub
                 """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-                self.energy *= 0.35
+                self.energy *= 0.45
 
                 """new wolves start with 1+x energy"""
 
