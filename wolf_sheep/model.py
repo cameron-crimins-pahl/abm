@@ -70,9 +70,9 @@ class WolfSheep(Model):
 
     def __init__(
         self,
-        height=100,
-        width=100,
-        initial_sheep=9,
+        height=70,
+        width=70,
+        initial_sheep=2,
         initial_wolves=30,
         sheep_reproduce=0.04,
         wolf_reproduce=0.05,

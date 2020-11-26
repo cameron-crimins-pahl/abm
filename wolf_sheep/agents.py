@@ -162,8 +162,8 @@ class Sheep(RandomWalker):
                        """
                     # self.nwnrg = random.randrange(20000,45000)
 
-                    nx = random.randrange(100)
-                    ny = random.randrange(100)
+                    nx = random.randrange(70)
+                    ny = random.randrange(70)
 
                     self.npos = (nx,ny)
                     lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
@@ -251,8 +251,8 @@ class Wolf(RandomWalker):
     def step(self):
 
         def path_to_closest_sheep(crnt_crdnt,trgt_crdnt):
+            G = nx.grid_2d_graph(70,70)
 
-            G = nx.grid_2d_graph(100,100)
 
             # coor1= self.pos
             # coor2 = sheep.pos
