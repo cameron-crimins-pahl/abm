@@ -1,6 +1,6 @@
 from mesa import Agent
-# from random_walk import RandomWalker
-from wolf_sheep.random_walk import RandomWalker
+from random_walk import RandomWalker
+# from wolf_sheep.random_walk import RandomWalker
 
 
 import pandas as pd
@@ -64,12 +64,8 @@ class Sheep(RandomWalker):
             return rep/100
 
         def carcs_per_day(n,dys):
+
             return n/dys
-
-
-
-
-
 
         data = pd.read_csv("sheep_data_sheet.csv")
 
@@ -101,7 +97,7 @@ class Sheep(RandomWalker):
            from a single carcassj
            and i can't forget to measure how many steps they take avg to find a carcass
            and I need to make them stay at a carcass once they find  it,"""
-        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=5)
+        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=2)
 
         wlvs = [obj for obj in this_cell if isinstance(obj, Wolf)]
 
@@ -144,34 +140,35 @@ class Sheep(RandomWalker):
 
             print(carcs_per_day(nt,days))
 
+            # if random.random() < .02:
             if carcs_per_day(nt,days) < .82:
 
-                print("CARCS PER DAY")
-                print(carcs_per_day(nt,days))
+                    # print("CARCS PER DAY")
+                    # print(carcs_per_day(nt,days))
 
-                """if the carcass hasn't reproduced yet, make a new carcass
-                   otherwise collect the data and do nothing"""
+                    """if the carcass hasn't reproduced yet, make a new carcass
+                       otherwise collect the data and do nothing"""
 
-                rprd="true"
+                    rprd="true"
 
 
-                """i might need to make this produce like 2 carcasses per day
-                   based on 100k kg average carrion production per day.
-                   if only 5 die every year
+                    """i might need to make this produce like 2 carcasses per day
+                       based on 100k kg average carrion production per day.
+                       if only 5 die every year
 
-                   if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
-                   I'll need to do it this way to demonstrate algebraic supply demand
-                   but
-                   """
-                # self.nwnrg = random.randrange(20000,45000)
+                       if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
+                       I'll need to do it this way to demonstrate algebraic supply demand
+                       but
+                       """
+                    # self.nwnrg = random.randrange(20000,45000)
 
-                nx = random.randrange(100)
-                ny = random.randrange(100)
+                    nx = random.randrange(100)
+                    ny = random.randrange(100)
 
-                self.npos = (nx,ny)
-                lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
-                self.model.grid.place_agent(lamb, self.npos)
-                self.model.schedule.add(lamb)
+                    self.npos = (nx,ny)
+                    lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
+                    self.model.grid.place_agent(lamb, self.npos)
+                    self.model.schedule.add(lamb)
 
         dst= {"consuming_wolves"  :[str(len(wlvs))]
             , "unique_id"         :[str(self.unique_id)]
@@ -248,7 +245,7 @@ class Wolf(RandomWalker):
 
            """
 
-        self.energy +=100
+        self.energy +=200
         """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
 
     def step(self):
@@ -267,7 +264,7 @@ class Wolf(RandomWalker):
             return pth[1]
 
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
-        self.energy -= 9
+        self.energy -= 17
         nrg = self.energy
         """ it costs self.energy to move"""
 
@@ -295,17 +292,19 @@ class Wolf(RandomWalker):
 
         nw_nrg = self.energy
 
+        # dist_f_carc = "None detected"
+
+        # if random.random() < .02:
+
         if len(sheep) > 0:
 
-            """this captures the list of all sheep within 5 step radius of the wolf
-                wolves need to go toward the closest one, and this can't damage self.random_move() at 89
-                but i may need to say if sheep within radius 5, move. else random_move and flip the order
-                of actions"""
+            """this captures the list of all sheep objects within 10 step radius of the wolf
+                wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
 
             cls_shp = []
 
             for ps in sheep:
-                """this is the list of sheep objects the wolf can detect based on detection radius=5 in line 217"""
+                """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
                 cls_shp.append(ps.pos)
 
             tree = spatial.KDTree(cls_shp)
@@ -365,9 +364,17 @@ class Wolf(RandomWalker):
                 or
                 reproduce if step is between 275-280 for breeding season
                 all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
-                sounds dumb"""
+                sounds dumb
 
-            if self.model.schedule.time in [30,90,180,275,320,420]:
+                I think I should do the same thing I did with carcasses.
+                if the ratio of allosaurs to sauropods is lower than x , then reproduce?
+                if total allosaurs per sq km is less than x , then reproduce?
+                or should reproduction not happen?
+                where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
+                how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
+
+            if random.random() < .02:
+            # if self.model.schedule.time in [30,90,180,275,320,420]:
 
             # if self.random.random() < self.model.wolf_reproduce:
                 # Create a new wolf cub
@@ -391,6 +398,7 @@ class Wolf(RandomWalker):
             , "reproduced"       :[str(rprd)]
             ,"step_no"           :[str(self.model.schedule.time)]
             ,"age"               :[str(self.age)]}
+            # ,"dist_from_carc"   :[str(dist_f_carc)]}
 
         dfx = pd.DataFrame(dkt)
         # print("DFX")
