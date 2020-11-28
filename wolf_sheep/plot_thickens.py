@@ -102,7 +102,7 @@ def sauropod_data():
 
     return df
 
-def plot_allsr_vs_carcass():
+def total_allosaurs():
     df = pd.read_csv("wolf_data_sheet.csv")
     # print(df[df["step_no"]==1])
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
@@ -110,18 +110,44 @@ def plot_allsr_vs_carcass():
     print("ttl allosaurs")
     ttl_allsr = df["unique_id"].nunique()
     print(ttl_allsr)
+    return ttl_allsr
+
+def total_carcasses():
+    df = pd.read_csv("sheep_data_sheet.csv")
+    "unique sauropod carcasses"
+    print("ttl sauropods")
+    ttl_saurp = df["unique_id"].nunique()
+    print(ttl_saurp)
+    return ttl_saurp
+
+def max_allsr():
+    df = pd.read_csv("wolf_data_sheet.csv")
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","count","animal"]
+    return df["count"].max()
+
+def max_carcasses():
+    df = pd.read_csv("sheep_data_sheet.csv")
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","count","animal"]
+    return df["count"].max()
+
+
+def plot_allsr_vs_carcass():
+    df = pd.read_csv("wolf_data_sheet.csv")
+    # print(df[df["step_no"]==1])
+    # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
 
     df_saurp = sauropod_data()
-
-    # print(df)
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
     df["animal"]="allosaur"
-    print(df)
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
-    # print(df)
-
     neighbs = sauropod_neighbors()
 
     # neighbs = dict(zip(neighbs["step_no"],neighbs["consuming_wolves"]))
@@ -132,26 +158,18 @@ def plot_allsr_vs_carcass():
     # df.columns = ["step_no","allsr","srp"]
 
     df = df.append(df_saurp,ignore_index=True)
-    print(df)
 
-    # #
-    # area = trapz(lst_allsr, dx=5)
-    # print("area =", area)
     # df = df.pivot(index='x', columns='color', values='y')
     df = df.pivot(index='step_no', columns='animal', values='count')
-
-
     fig, ax = plt.subplots()
 
     df.plot(kind="line",ax=ax)
-    neighbs.plot(kind="line",y="allosarus_at_carcass",ax=ax)
+    neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax)
 
-    ax.set_xlabel("Step Number")
+    ax.set_xlabel("Day")
     ax.set_ylabel("Population")
 
     plt.title("allosaur population vs carrion supply over time")
-
-
     plt.show()
     plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
 
