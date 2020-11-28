@@ -5,6 +5,8 @@ from mesa.visualization.UserParam import UserSettableParameter
 from wolf_sheep.agents import Wolf, Sheep, GrassPatch
 from wolf_sheep.model import WolfSheep
 
+import cfg
+
 
 def wolf_sheep_portrayal(agent):
 
@@ -42,7 +44,7 @@ def wolf_sheep_portrayal(agent):
     return portrayal
 
 
-canvas_element = CanvasGrid(wolf_sheep_portrayal, 70, 70, 500, 500)
+canvas_element = CanvasGrid(wolf_sheep_portrayal, cfg.dimensions(), cfg.dimensions(), 500, 500)
 chart_element = ChartModule(
     [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
 )

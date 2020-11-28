@@ -11,6 +11,7 @@ import math
 import random
 from scipy import spatial
 import networkx as nx
+import cfg
 
 dfw = pd.DataFrame([])
 dfs = pd.DataFrame([])
@@ -162,8 +163,8 @@ class Sheep(RandomWalker):
                        """
                     # self.nwnrg = random.randrange(20000,45000)
 
-                    nx = random.randrange(70)
-                    ny = random.randrange(70)
+                    nx = random.randrange(cfg.dimensions())
+                    ny = random.randrange(cfg.dimensions())
 
                     self.npos = (nx,ny)
                     lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
@@ -251,7 +252,7 @@ class Wolf(RandomWalker):
     def step(self):
 
         def path_to_closest_sheep(crnt_crdnt,trgt_crdnt):
-            G = nx.grid_2d_graph(70,70)
+            G = nx.grid_2d_graph(cfg.dimensions(),cfg.dimensions())
 
 
             # coor1= self.pos
@@ -279,8 +280,10 @@ class Wolf(RandomWalker):
         """radius = 10 km because
            komodo dragons can smell carcasses 10km away
            brown bears may be at 20km but email here for sources: heiko jansen bear smell
-           the other thing is that giant rotting sauropods must have smelled awful"""
-        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=10)
+           the other thing is that giant rotting sauropods must have smelled awful
+
+           """
+        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
         # this_cell = self.model.grid.get_cell_list_contents([self.pos])
 
         """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
@@ -341,22 +344,17 @@ class Wolf(RandomWalker):
             """this selects the random sheep to be consumed """
             self.energy += self.model.wolf_gain_from_food
             sheep_to_eat.energy -= self.model.wolf_gain_from_food
-
             nw_nrg = self.energy
 
         else:
-
             self.random_move()
 
-        # Death or reproduction
         rprd = "false"
 
         """ if the reptile allosaur's body mass drops by 30%, it dies.
             just as in monitor lizards"""
         if self.energy < 2:
-
             self.model.grid._remove_agent(self.pos, self)
-
             self.model.schedule.remove(self)
 
         else:
@@ -401,12 +399,166 @@ class Wolf(RandomWalker):
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
 
         dfx = pd.DataFrame(dkt)
-        # print("DFX")
-        # print(dfx)
         dfx.to_csv("wolf_data_sheet.csv",mode="a",header=False)
 
-        # dfw.append(dfx, ignore_index=True)
-        # dfw.to_csv("wolf_data_sheet.csv",mode="a")
+
+class Coyote(RandomWalker):
+    """
+    A wolf that walks around, reproduces (asexually) and eats sheep.
+    """
+
+    energy = None
+
+    def __init__(self, unique_id, pos, model, moore, energy=None):
+        super().__init__(unique_id, pos, model, moore=moore)
+        self.energy = energy
+
+        self.energy +=200
+        """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
+
+    def step(self):
+
+        def path_to_closest_sheep(crnt_crdnt,trgt_crdnt):
+            G = nx.grid_2d_graph(cfg.dimensions(),cfg.dimensions())
+            pth = nx.bidirectional_shortest_path(G, source=crnt_crdnt, target=trgt_crdnt)
+            return pth[1]
+
+        """ life cost is 9kg / day for 1000kg varanid metabolism"""
+        self.energy -= cfg.fmr_cost()
+        nrg = self.energy
+        """ it costs self.energy per day to live fmr"""
+
+        data = pd.read_csv("wolf_data_sheet.csv")
+
+        da = data[data["unique_id"]==self.unique_id]
+
+        self.age = len(da.index)
+
+        x, y = self.pos
+
+        """radius = 10 km because
+           komodo dragons can smell carcasses 10km away
+           brown bears may be at 20km but email here for sources: heiko jansen bear smell
+           the other thing is that giant rotting sauropods must have smelled awful
+
+           """
+        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
+        # this_cell = self.model.grid.get_cell_list_contents([self.pos])
+
+        """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
+            self.model.grid.get_neighbors is better
+        2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
+        and I need to make them stay at a carcass once they find  it,"""
+
+        sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
+
+        nw_nrg = self.energy
+
+        # dist_f_carc = "None detected"
+
+        # if random.random() < .02:
+
+        if len(sheep) > 0:
+
+            """this captures the list of all sheep objects within 10 step radius of the wolf
+                wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
+
+            cls_shp = []
+
+            for ps in sheep:
+                """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
+                cls_shp.append(ps.pos)
+
+            tree = spatial.KDTree(cls_shp)
+
+            arr = tree.query([self.pos])
+
+            clsst_shp = arr[1][0]
+
+            sheep_to_eat = sheep[clsst_shp]
+            # print("SHEEP TO TARGET:")
+            # print(sheep_to_eat)
+            #
+            # print("SHEEP TO TARGET COORDINATES:")
+            # print(self.pos)
+            # print(sheep_to_eat.pos)
+
+
+            to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
+
+            self.non_random_move(to_trgt)
+
+            # sheep_to_eat = self.random.choice(sheep)
+            """ if the sheep is NOT adjacent to the wolf square,
+                move toward it
+                else
+                don't move at all adn keep eating"""
+            # print(sheep)
+
+            start_e = sheep_to_eat.energy
+
+            """make a dataframe to record the actions of each agent, if they ate, etc.  """
+
+            # print("sheep from wolf perspective has  " +str()+ " energy")
+            """this selects the random sheep to be consumed """
+            self.energy += self.model.wolf_gain_from_food
+            sheep_to_eat.energy -= self.model.wolf_gain_from_food
+            nw_nrg = self.energy
+
+        else:
+            self.random_move()
+
+        rprd = "false"
+
+        """ if the reptile allosaur's body mass drops by 30%, it dies.
+            just as in monitor lizards"""
+        if self.energy < 2:
+            self.model.grid._remove_agent(self.pos, self)
+            self.model.schedule.remove(self)
+
+        else:
+            """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
+                or
+                reproduce if step is between 275-280 for breeding season
+                all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
+                sounds dumb
+
+                I think I should do the same thing I did with carcasses.
+                if the ratio of allosaurs to sauropods is lower than x , then reproduce?
+                if total allosaurs per sq km is less than x , then reproduce?
+                or should reproduction not happen?
+                where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
+                how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
+
+            if random.random() < .02:
+            # if self.model.schedule.time in [30,90,180,275,320,420]:
+
+            # if self.random.random() < self.model.wolf_reproduce:
+                # Create a new wolf cub
+                """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
+                self.energy *= 0.45
+
+                """new wolves start with 1+x energy"""
+
+                cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
+
+                self.model.grid.place_agent(cub, cub.pos)
+
+                self.model.schedule.add(cub)
+
+                rprd = "true"
+
+        dkt= {"adjacent_sheep"  :[str(len(sheep))]
+            , "unique_id"       :[str(self.unique_id)]
+            , "initial_energy"  :[str(nrg)]
+            , "resulting_energy" :[str(nw_nrg)]
+            , "reproduced"       :[str(rprd)]
+            ,"step_no"           :[str(self.model.schedule.time)]
+            ,"age"               :[str(self.age)]}
+            # ,"dist_from_carc"   :[str(dist_f_carc)]}
+
+        dfx = pd.DataFrame(dkt)
+        dfx.to_csv("wolf_data_sheet.csv",mode="a",header=False)
 
 
 class GrassPatch(Agent):

@@ -150,83 +150,10 @@ def plot_allsr_vs_carcass():
     ax.set_ylabel("Population")
 
     plt.title("allosaur population vs carrion supply over time")
-    # ani = animation.FuncAnimation(fig, animate, interval=1000)
+
 
     plt.show()
-
-#
-# srp = sauropod_data()
-# x_values = []
-# y_values = []
-# z_values = []
-# q_values = []
-# counter = 0
-# index = count()
-#
-# def animate(i):
-#
-#
-#     #print(counter)
-#     dfw = pd.read_csv("wolf_data_sheet.csv")
-#     dfw = dfw.groupby(["step_no"]).count()
-#     dfw = dfw.reset_index()
-#     dfw["animal"]="allosaur"
-#     dfw =dfw[["step_no","unique_id","animal"]]
-#     dfw.columns = ["step_no","count","animal"]
-#
-#     dfsh = pd.read_csv("sheep_data_sheet.csv")
-#     dfs = dfsh.groupby(["step_no"]).count()
-#     dfs = dfs.reset_index()
-#     dfs["animal"]="allosaur"
-#     dfs =dfs[["step_no","unique_id","animal"]]
-#     dfs.columns = ["step_no","count","animal"]
-#
-#     df_c = dfsh[["step_no","consuming_wolves"]].groupby(["step_no"]).sum()
-#     df_c = df_c.reset_index()
-#     df_c.columns =["step_no","allosaurs_at_carcass"]
-#
-#     x = next(index) # counter or x variable -> index
-#     counter = next(index)
-#     print(counter)
-#     x_values.append(x)
-#     '''
-#     Three random value series ->
-#     Y : 0-5
-#     Z : 3-8
-#     Q : 0-10
-#     '''
-#     y = dfw["count"].iat[-1]#random.randint(0, 5)
-#     z = dfs["count"].iat[-1]
-#     q = df_c["allosaurs_at_carcass"].iat[-1]
-#     # append values to keep graph dynamic
-#     # this can be replaced with reading values from a csv files also
-#     # or reading values from a pandas dataframe
-#     y_values.append(y)
-#     z_values.append(z)
-#     q_values.append(q)
-#
-#
-#     if counter >3:
-#         '''
-#         This helps in keeping the graph fresh and refreshes values after every 40 timesteps
-#         '''
-#         x_values.pop(0)
-#         y_values.pop(0)
-#         z_values.pop(0)
-#         q_values.pop(0)
-#         #counter = 0
-#         plt.cla() # clears the values of the graph
-#
-#     plt.plot(x_values, y_values)
-#     plt.plot(x_values, z_values)
-#     plt.plot(x_values, q_values)
-#     fig, ax = plt.subplots()
-#
-#
-#     # ax.legend(["Value 1 ","Value 2","Value 3"])
-#     ax.set_xlabel("Step Number")
-#     ax.set_ylabel("Population")
-#     plt.title('allosaur population vs carrion supply over time')
+    plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
 
 def pop_check():
 
@@ -234,19 +161,4 @@ def pop_check():
 
 if __name__=="__main__":
 
-    # ani = FuncAnimation(plt.gcf(), animate, 1000)
-    # plt.tight_layout()
-    # plt.show()
-
-    # print(pop_check())
-
-    # sauropod_neighbors()
     plot_allsr_vs_carcass()
-    # sauropod_data()
-    # plot_allsr_vs_carcass()
-
-
-
-    # plot_sauropods()
-
-    # plot_allsr_vs_carcass()

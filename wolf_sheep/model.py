@@ -13,10 +13,12 @@ from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 
+
 from agents import Sheep, Wolf, GrassPatch
 from schedule import RandomActivationByBreed
 import agents
 
+import cfg
 #
 # # #
 # from wolf_sheep.agents import Sheep, Wolf, GrassPatch
@@ -70,13 +72,13 @@ class WolfSheep(Model):
 
     def __init__(
         self,
-        height=70,
-        width=70,
-        initial_sheep=2,
+        height = cfg.dimensions(),
+        width  = cfg.dimensions(),
+        initial_sheep=cfg.initial_carcs(),
         initial_wolves=30,
         sheep_reproduce=0.04,
         wolf_reproduce=0.05,
-        wolf_gain_from_food=30,
+        wolf_gain_from_food = cfg.wolf_gn(),
         grass=False,
         grass_regrowth_time=30,
         sheep_gain_from_food=4,
@@ -206,5 +208,5 @@ if __name__=="__main__":
     #
     md = WolfSheep()
     #
-    for itms in range(730):
+    for itms in range(265):
         md.step()
