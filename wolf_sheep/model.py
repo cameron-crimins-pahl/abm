@@ -19,6 +19,7 @@ from schedule import RandomActivationByBreed
 import agents
 
 import cfg
+import plot_thickens as pt
 #
 # # #
 # from wolf_sheep.agents import Sheep, Wolf, GrassPatch
@@ -72,16 +73,16 @@ class WolfSheep(Model):
 
     def __init__(
         self,
-        height = cfg.dimensions(),
-        width  = cfg.dimensions(),
-        initial_sheep=cfg.initial_carcs(),
-        initial_wolves=30,
-        sheep_reproduce=0.04,
-        wolf_reproduce=0.05,
+        height          = cfg.dimensions(),
+        width           = cfg.dimensions(),
+        initial_sheep   = cfg.initial_carcs(),
+        initial_wolves  = cfg.initial_allsrs(),
+        sheep_reproduce = 0.04,
+        wolf_reproduce  = 0.05,
         wolf_gain_from_food = cfg.wolf_gn(),
-        grass=False,
-        grass_regrowth_time=30,
-        sheep_gain_from_food=4,
+        grass           = False,
+        grass_regrowth_time = 30,
+        sheep_gain_from_food = 4,
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -208,5 +209,9 @@ if __name__=="__main__":
     #
     md = WolfSheep()
     #
-    for itms in range(265):
+    for itms in range(365):
         md.step()
+
+    cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.radyis(), cfg.initial_carcs(), cfg.initial_allsrs()
+                , cfg.saurp_mass(), cfg.saurp_crcs_apprnce_rate(), pt.total_allosaurs(), pt.total_carcasses()
+                , cfg.max_allsr(), plt.day_steps())

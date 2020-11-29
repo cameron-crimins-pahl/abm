@@ -136,8 +136,14 @@ def max_carcasses():
     df.columns = ["step_no","count","animal"]
     return df["count"].max(level="step_no")
 
+def day_steps():
+    df = pd.read_csv("sheep_data_sheet.csv")
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    return len(df.index)
 
-def plot_allsr_vs_carcass():
+
+def plot_allsr_vs_carcass(f_pth):
     df = pd.read_csv("wolf_data_sheet.csv")
     # print(df[df["step_no"]==1])
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
@@ -171,7 +177,8 @@ def plot_allsr_vs_carcass():
 
     plt.title("allosaur population vs carrion supply over time")
     plt.show()
-    plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
+    plt.savefig(f_pth)
+    # plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
 
 def pop_check():
 

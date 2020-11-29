@@ -18,12 +18,16 @@ def radyis():
     return r
 
 def fmr_cost():
-    c = 9
+    c = 9.04
     return c
 
 def initial_carcs():
     c = 5
     return 5
+
+def initial_allsrs():
+    a = 30
+    return a
 
 def saurp_mass():
     m = 45000
@@ -33,7 +37,7 @@ def allsr_reprd_rte():
     m = .02
     return m
 
-def saurp_rprd_rate():
+def saurp_crcs_apprnce_rate():
     r = .82
     return r
 
@@ -55,7 +59,7 @@ metab_dkt = {9.04   :"1000kg_varanid"
     #    Gene D - 25% chance to kill on contact of living sauropod 35% to be killed, rest of % draw"""
 def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
             , saurp_mass, carcass_apprnce_rte, totl_allsrs, totl_crcs
-            , mx_pop_allsr):
+            , mx_pop_allsr, len_sim):
 
     """extinct=TRUE if days didn't reach 365
        competition = TRUE if multiple phenotypes compete for resources"""
@@ -99,15 +103,22 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     print(txt)
     print(os.path.dirname(os.path.realpath(__file__)))
 
-    new_path = os.path.dirname(os.path.realpath(__file__))+"/"+str(metab_dkt[fmr_cost])
+    # new_path = os.path.dirname(os.path.realpath(__file__))+"/"+str(metab_dkt[fmr_cost])
+    new_path = "/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/"+str(metab_dkt[fmr_cost])+"-test"
     print(new_path)
+
+    if len_sim<365:
+        extinction="TRUE"
+    else:
+        extinction="FALSE"
     #
     subprocess.call("mkdir "+new_path, shell=True)
-    #
-    "45000kg_saurp-extinct-FALSE-competition-TRUE.txt"
-    f= open(new_path+"/45000kg_saurp-extinct-FALSE-competition-TRUE.txt","w+")
-
+    #"/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png"
+    "45000kg_saurp-extinct-FALSE-competition.txt"
+    f= open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE.txt","w+")
+    fg =new_path+"/"+"figure_1.png"
     f.write(txt)
+    plt.plot_allsr_vs_carcass(fg)
 
 
 

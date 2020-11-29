@@ -45,7 +45,7 @@ class Sheep(RandomWalker):
 
         # if self.energy>45000:
         #     self.energy =45000
-        self.energy +=45000
+        self.energy +=cfg.saurp_mass()
 
 
         # print("sheep energy is "+ str(self.energy))
