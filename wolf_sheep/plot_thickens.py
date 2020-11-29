@@ -126,7 +126,7 @@ def max_allsr():
     df = df.reset_index()
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
-    return df["count"].max()
+    return df["count"].max(level="step_no")
 
 def max_carcasses():
     df = pd.read_csv("sheep_data_sheet.csv")
@@ -134,7 +134,7 @@ def max_carcasses():
     df = df.reset_index()
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
-    return df["count"].max()
+    return df["count"].max(level="step_no")
 
 
 def plot_allsr_vs_carcass():
