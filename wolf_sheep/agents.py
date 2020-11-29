@@ -136,13 +136,25 @@ class Sheep(RandomWalker):
 
         """if total number of created carcasses / steps is greater than 1.3,
         do nothing,
-        else make a new carcass"""
+        else make a new carcass
+        for the ones with live animals ,
+        if the animal dies it creates a carcass of its size
+        i need to remmeber to make one with normally distributed animal size so like only 5 percent are full size
+        just to see what happens to them
+        when does predation become profitable ? when proportion of adults gets below a certain size?
+        or when attack success is over a certain amount? I guess I'll find out
+        also the situation with adults is that if the allosaur hits an adult more than 2x its own mass
+        it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
+        """
+
+
+
         if days > 0:
 
             print(carcs_per_day(nt,days))
 
             # if random.random() < .02:
-            if carcs_per_day(nt,days) < .82:
+            if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
 
                     # print("CARCS PER DAY")
                     # print(carcs_per_day(nt,days))
