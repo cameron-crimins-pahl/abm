@@ -1,4 +1,7 @@
 import plot_thickens as pt
+import subprocess
+import os
+
 
 def dimensions():
     """ if this is 50x50, dimesnions = 50"""
@@ -36,26 +39,40 @@ def saurp_rprd_rate():
 
 
 
-metab_dkt = {9:"1000kg varanid"
-            ,17:"2000kg varanid"}
+metab_dkt = {9.04   :"1000kg_varanid"
+            ,17.04  :"2000kg_varanid"
+            ,5.94   :"1000kg_reptile"
+            ,11.01  :"2000kg_reptile"
+            ,18     :"1000kg_bird"
+            ,28     :"2000kg_bird"
+            ,17.17  :"1000kg_mammal"
+            ,28.57  :"2000kg_mammal"}
+    # """<== notes:
+    #    Gene A - max between 1500 and 1750,
+    #    Gene B - max between 1600 and 2200 kg.
+    #    make their energy needs conditional within each object based on Nagy
+    #    Gene C - 35% chance to kill on contact of living sauropod 25% to be killed, rest of % draw
+    #    Gene D - 25% chance to kill on contact of living sauropod 35% to be killed, rest of % draw"""
+def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
+            , saurp_mass, carcass_apprnce_rte, totl_allsrs, totl_crcs
+            , mx_pop_allsr):
 
-def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs
-                     , intl_als, saurp_pop, saurp_mass, carcass_apprnce_rte
-                     , totl_allsrs, totl_crcs, mx_pop_allsr):
+    """extinct=TRUE if days didn't reach 365
+       competition = TRUE if multiple phenotypes compete for resources"""
 
+    thrtcl_max_allsrs =  ((saurp_mass * totl_crcs)/365)/fmr_cost
     txt = "Results\n"+\
-    "dimensions                     :"+str(dmnsn)+"x"+str(dmnsn)+" squares at 1km each\n"+\
-    "area                           :"+str(dmnsn * dmnsn)+ "sq km\n"+\
-    "parameters                     :\n"+\
-    "mass & metabolism              : "+metab_dkt[fmr_cost]+"\n"+\
+    "dimensions                     : "+str(dmnsn)+"x"+str(dmnsn)+" squares at 1km each\n"+\
+    "area                           : "+str(dmnsn * dmnsn)+ "sq km\n"+\
+    "mass & metabolism              : "+str(metab_dkt[fmr_cost])+"\n"+\
     "fmr                            : "+str(fmr_cost)+"kg / day\n"+\
     "max food consumption rate      : "+str(wolf_gn)+"kg/day \n"+\
     "carcass detection radius       : "+str(rdius)+"km\n"+\
     "initial allosaur population    : "+str(intl_als)+"\n"+\
     "initial carcass population     : "+str(intl_crcs)+"\n"+\
     "max carcass mass               : "+str(saurp_mass)+"\n"+\
-    "average distance of carcass when first detected:\n"+\
-    "percent of allosaurs that cannot detect anything/day:\n"+\
+    "average distance of carcass when first detected : \n"+\
+    "percent of allosaurs out of range:\n"+\
     "percent of allosaurs with gene : A  [start , end]\n"+\
     "percent of allosaurs with gene : B  [start , end]\n"+\
     "percent of allosaurs with gene : C  [start , end]\n"+\
@@ -67,31 +84,45 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs
     "\n"+\
     "total allosaurs made           : "+str(totl_allsrs)+"\n"+\
     "---allosaurs pop plateau reached at day 160 ish, between 1750-1899---\n"+\
-    "total carcasses                : "+str(totl_crcs)+"\n"+\
-    "max of allosaurs at any time   : "+str(mx_pop_allsr)+"--\n"+\
-    "--in gross terms 318 carcasses at 45k kg is enough to feed 2168 allosaurs per day--"+\
-    "--so my numbers of 1899 are right on the money\n"+\
-    "299*20 = 5980 adults"+\
-    "5980/3 = 1993"+\
-    "1993*10 = 19,930 total animals"+\
-    "is density of 1.993 living sauropods / km2"+\
-    carcasses represent living sauropod pop of :
+    "total carcasses                : "+str(totl_crcs)+"\n" +\
+    "actual max of allosaurs        : "+str(mx_pop_allsr)+"\n" +\
+    "theoretical max of allosaurs   : "+str( thrtcl_max_allsrs )+"\n" +\
+    "In gross terms "+str(totl_crcs)+" carcasses at "+str(saurp_mass)+" kg is enough to feed "+ str( ((saurp_mass * totl_crcs)/365)/fmr_cost ) +" allosaurs\n"+\
+    "-- "+str(mx_pop_allsr)+" is "+str( (mx_pop_allsr-thrtcl_max_allsrs)/thrtcl_max_allsrs )+"% of theoretical max\n"+\
+    "total living adult sauropod pop: "+str(totl_crcs*20)+"\n"+\
+    "sauropod density               : "+str( ((totl_crcs/3)*10)/(dmnsn * dmnsn))+" / km2\n"+\
+    "allosaur density               : "+str( mx_pop_allsr/(dmnsn * dmnsn))+ " /km2\n"+\
+    "number of unmet carcasses      :\n"+\
+    "allosaurs that starved         :\n"+\
+    "avg swarm size per carcass     :\n"
 
-    number of unmet carcasses:
+    print(txt)
+    print(os.path.dirname(os.path.realpath(__file__)))
 
-    number of allosaurs that couldn't find food:
+    new_path = os.path.dirname(os.path.realpath(__file__))+"/"+str(metab_dkt[fmr_cost])
+    print(new_path)
+    #
+    subprocess.call("mkdir "+new_path, shell=True)
+    #
+    "45000kg_saurp-extinct-FALSE-competition-TRUE.txt"
+    f= open(new_path+"/45000kg_saurp-extinct-FALSE-competition-TRUE.txt","w+")
 
-    average swarm size around one carcass:
+    f.write(txt)
 
 
 
 
+    #
+    #
+    # """ at mass 2000kg, 45kg sauropods support 5969 carnosaurs at sauropod adult pop 30k (total popl 100)
+    #     that ratio is 6:10
+    #
+    #     so far, a pop of 10k saurops in the simulation has sustained 1750 allosaurs at once but total of 3670 created.
+    #     that really makes sense
+    #
+    #     update: K might be 1500-1750 , 273 carcasses"""
 
 
-    """ at mass 2000kg, 45kg sauropods support 5969 carnosaurs at sauropod adult pop 30k (total popl 100)
-        that ratio is 6:10
+if __name__=="__main__":
 
-        so far, a pop of 10k saurops in the simulation has sustained 1750 allosaurs at once but total of 3670 created.
-        that really makes sense
-
-        update: K might be 1500-1750 , 273 carcasses"""
+    summary(70, 20, 6, 9.04, 13, 10, 45000, .82, 6000, 299, 1720)
