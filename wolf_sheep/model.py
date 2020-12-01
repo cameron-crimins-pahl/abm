@@ -68,7 +68,12 @@ class WolfSheep(Model):
         at 5% mortality that would be 600- 1200 carcasses/year. That is 3.2 per day at a constant rate, or 1.6 per day
         if the population was half as dense.
         I need to do this linearly, but also seasonally, which means I should do a dry season death with 80% of
-        casualties in a 3 month time span, then 20% spread through the rest of the year."""
+        casualties in a 3 month time span, then 20% spread through the rest of the year.
+
+
+        Don't forget to do a scatter plot of different genotypes over time? no i can just do a line graph
+        oen color for predators/scavs plus strict scavengers
+        also different colors for 20% winners vs 35% winners"""
     )
 
     def __init__(
@@ -212,6 +217,6 @@ if __name__=="__main__":
     for itms in range(365):
         md.step()
 
-    cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.radyis(), cfg.initial_carcs(), cfg.initial_allsrs()
+    cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.fmr_cost(), cfg.initial_carcs(), cfg.initial_allsrs()
                 , cfg.saurp_mass(), cfg.saurp_crcs_apprnce_rate(), pt.total_allosaurs(), pt.total_carcasses()
-                , cfg.max_allsr(), plt.day_steps())
+                , pt.max_allsr(), pt.day_steps())

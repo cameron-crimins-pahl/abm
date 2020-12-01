@@ -9,6 +9,7 @@ from itertools import count
 from matplotlib.animation import FuncAnimation
 
 from mpl_toolkits import mplot3d
+import random
 
 # import matplotlib.animation as animation
 import time
@@ -56,7 +57,7 @@ def sauropod_neighbors():
 
     df = df[["step_no","consuming_wolves"]].groupby(["step_no"]).sum()
     df = df.reset_index()
-    df.columns =["step_no","allosarus_at_carcass"]
+    df.columns =["step_no","allosaurs_at_carcass"]
     return df
 
 def sauropod_data():
@@ -124,17 +125,20 @@ def max_allsr():
     df = pd.read_csv("wolf_data_sheet.csv")
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
+    df["animal"]="allosaur"
+    print(df.columns)
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
-    return df["count"].max(level="step_no")
+    return df["count"].max()
 
 def max_carcasses():
     df = pd.read_csv("sheep_data_sheet.csv")
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
+
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
-    return df["count"].max(level="step_no")
+    return df["count"].max()
 
 def day_steps():
     df = pd.read_csv("sheep_data_sheet.csv")
@@ -176,7 +180,7 @@ def plot_allsr_vs_carcass(f_pth):
     ax.set_ylabel("Population")
 
     plt.title("allosaur population vs carrion supply over time")
-    plt.show()
+    # plt.show()
     plt.savefig(f_pth)
     # plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
 
@@ -184,6 +188,25 @@ def pop_check():
 
     return 6/5
 
+def freq_check():
+    vn = np.random.uniform(1,45000,10)
+    """the first argument is mean center of the distribution, eg 20
+        the next argument is scale, so if 1 it is normal dist between 19 and 21.
+        last arg is length of the list"""
+    # vu = np.random.uniform(17,25,10)
+
+    # print(vn)
+    # d = abs(vn)
+    # d = np.add(vn,abs(np.min(vn)))
+
+    vn= np.sort(vn)
+    print(vn)
+
+    # return random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])
+    print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15]))
+
 if __name__=="__main__":
 
-    plot_allsr_vs_carcass()
+    freq_check()
+
+    # plot_allsr_vs_carcass()s

@@ -9,21 +9,21 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 30
+    fd = 42
     return fd
 
 def radyis():
     """detection radius for consumer"""
-    r = 6
+    r = 10
     return r
 
 def fmr_cost():
-    c = 9.04
+    c = 28.57
     return c
 
 def initial_carcs():
-    c = 5
-    return 5
+    c = 3
+    return 3
 
 def initial_allsrs():
     a = 30
@@ -37,10 +37,32 @@ def allsr_reprd_rte():
     m = .02
     return m
 
+def goat_reprd_rte():
+    m = .02
+    return m
+
 def saurp_crcs_apprnce_rate():
-    r = .82
+
+    """.85 per day"""
+    r = .85
     return r
 
+def goat_size_at_birth():
+    vn = np.random.uniform(1,45000,10)
+    """the first argument is mean center of the distribution, eg 20
+        the next argument is scale, so if 1 it is normal dist between 19 and 21.
+        last arg is length of the list"""
+    # vu = np.random.uniform(17,25,10)
+
+    # print(vn)
+    # d = abs(vn)
+    # d = np.add(vn,abs(np.min(vn)))
+
+    vn= np.sort(vn)
+    print(vn)
+
+    return random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])
+    # print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15]))
 
 
 metab_dkt = {9.04   :"1000kg_varanid"
@@ -115,10 +137,11 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     subprocess.call("mkdir "+new_path, shell=True)
     #"/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png"
     "45000kg_saurp-extinct-FALSE-competition.txt"
-    f= open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE.txt","w+")
-    fg =new_path+"/"+"figure_1.png"
+    f       = open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE-seasons-FALSE-sr-"+str(rdius)+".txt","w")
+    fg      =      new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE-seasons-FALSE-sr-"+str(rdius)+".png"
+    print(fg)
     f.write(txt)
-    plt.plot_allsr_vs_carcass(fg)
+    pt.plot_allsr_vs_carcass(fg)
 
 
 
@@ -136,4 +159,4 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
 
 if __name__=="__main__":
 
-    summary(70, 20, 6, 9.04, 13, 10, 45000, .82, 6000, 299, 1720)
+    summary(70, 20, 6, 9.04, 13, 10, 45000, .82, 6000, 299, 1720,50)

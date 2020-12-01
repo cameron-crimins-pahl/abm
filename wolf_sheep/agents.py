@@ -15,6 +15,7 @@ import cfg
 
 dfw = pd.DataFrame([])
 dfs = pd.DataFrame([])
+dfg = pd.DataFrame([])
 #
 # dfw = pd.DataFrame(columns = ["adjacent_sheep","unique_id","step_no","resulting_energy","adjacent_sheep","reproduced","initial_energy","age"])
 # dfs = pd.DataFrame(columns = ["consuming_wolves","unique_id","step_no","resulting_energy","adjacent_sheep","reproduced","initial_energy","age"])
@@ -45,7 +46,7 @@ class Sheep(RandomWalker):
 
         # if self.energy>45000:
         #     self.energy =45000
-        self.energy +=cfg.saurp_mass()
+        self.energy += cfg.saurp_mass()
 
 
         # print("sheep energy is "+ str(self.energy))
@@ -277,7 +278,7 @@ class Wolf(RandomWalker):
             return pth[1]
 
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
-        self.energy -= 17
+        self.energy -= cfg.fmr_cost()
         nrg = self.energy
         """ it costs self.energy to move"""
 
@@ -383,7 +384,7 @@ class Wolf(RandomWalker):
                 where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
                 how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
 
-            if random.random() < .02:
+            if random.random() < cfg.allsr_reprd_rte():
             # if self.model.schedule.time in [30,90,180,275,320,420]:
 
             # if self.random.random() < self.model.wolf_reproduce:
@@ -542,7 +543,7 @@ class Coyote(RandomWalker):
                 where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
                 how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
 
-            if random.random() < .02:
+            if random.random() < cfg.allsr_reprd_rte():
             # if self.model.schedule.time in [30,90,180,275,320,420]:
 
             # if self.random.random() < self.model.wolf_reproduce:
@@ -571,6 +572,69 @@ class Coyote(RandomWalker):
 
         dfx = pd.DataFrame(dkt)
         dfx.to_csv("wolf_data_sheet.csv",mode="a",header=False)
+
+class Goat(RandomWalker):
+    """
+    A sheep that walks around, reproduces (asexually) and gets eaten.
+    The init is the same as the RandomWalker.
+    """
+
+    energy = None
+
+    def __init__(self, unique_id, pos, model, moore, energy=None):
+        super().__init__(unique_id, pos, model, moore=moore)
+        self.energy = energy
+
+        # self.energy += cfg.saurp_mass()
+        self.energy += cfg.goat_size_at_birth()
+
+    def step(self):
+        """
+        A model step. Move, then eat grass and reproduce.
+        """
+        self.random_move()
+
+        living = True
+        
+        nrg = self.energy
+
+        self.energy -= 500
+
+        nw_nrg = self.energy
+
+        if self.energy < 500:
+            self.model.grid._remove_agent(self.pos, self)
+            self.model.schedule.remove(self)
+            living = False
+
+        if living and self.random.random() < cfg.goat_reprd_rte():
+            rprd="true"
+            self.energy /= 2
+
+            nx = random.randrange(cfg.dimensions())
+            ny = random.randrange(cfg.dimensions())
+
+            self.npos = (nx,ny)
+            lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
+            self.model.grid.place_agent(lamb, self.npos)
+            self.model.schedule.add(lamb)
+
+            lamb = Goat(self.model.next_id(), self.pos, self.model, self.moore, 1)
+
+            self.model.grid.place_agent(lamb, self.pos)
+
+            self.model.schedule.add(lamb)
+
+        dst= {"unique_id"         :[str(self.unique_id)]
+            , "initial_energy"    :[str(nrg)]
+            ,"resulting_energy"   :[str(nw_nrg)]
+            ,"reproduced"         :[str(rprd)]
+            ,"step_no"            :[str(self.model.schedule.time)]
+            ,"age"                :[str(self.age)]}
+
+        dsx = pd.DataFrame(dst)
+        dsx.to_csv("goat_data_sheet.csv",mode="a",header=False)
+        dfg.append(dsx, ignore_index=True)
 
 
 class GrassPatch(Agent):
