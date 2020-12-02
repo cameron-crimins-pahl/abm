@@ -188,22 +188,7 @@ def pop_check():
 
     return 6/5
 
-def freq_check():
-    vn = np.random.uniform(1,45000,10)
-    """the first argument is mean center of the distribution, eg 20
-        the next argument is scale, so if 1 it is normal dist between 19 and 21.
-        last arg is length of the list"""
-    # vu = np.random.uniform(17,25,10)
 
-    # print(vn)
-    # d = abs(vn)
-    # d = np.add(vn,abs(np.min(vn)))
-
-    vn= np.sort(vn)
-    print(vn)
-
-    # return random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])
-    print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15]))
 
 if __name__=="__main__":
 

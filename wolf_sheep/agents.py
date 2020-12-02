@@ -458,9 +458,10 @@ class Coyote(RandomWalker):
            """
 
         this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
+
         goats = [obj for obj in this_cell if isinstance(obj, Goat)]
 
-        if len(goats)>0:
+        if len(goats) > 0:
 
             cls_shp = []
 

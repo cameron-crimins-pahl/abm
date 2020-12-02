@@ -2,7 +2,7 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
 
-from wolf_sheep.agents import Wolf, Sheep, GrassPatch
+from wolf_sheep.agents import Wolf, Sheep, GrassPatch, Coyote, Goat
 from wolf_sheep.model import WolfSheep
 
 import cfg
@@ -19,8 +19,17 @@ def wolf_sheep_portrayal(agent):
     if type(agent) is Sheep:
         portrayal["Shape"] = "wolf_sheep/resources/sheep.png"
         # https://icons8.com/web-app/433/sheep
+        portrayal["text"] = round(agent.energy, 1)
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
+
+    elif type(agent) is Goat:
+        portrayal["Shape"] = "wolf_sheep/resources/goat.png"
+        # https://icons8.com/web-app/36821/German-Shepherd
+        portrayal["scale"] = 0.9
+        portrayal["Layer"] = 2
+        portrayal["text"] = round(agent.energy, 1)
+        portrayal["text_color"] = "Black"
 
     elif type(agent) is Wolf:
         portrayal["Shape"] = "wolf_sheep/resources/wolf.png"
@@ -28,7 +37,15 @@ def wolf_sheep_portrayal(agent):
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
         portrayal["text"] = round(agent.energy, 1)
-        portrayal["text_color"] = "White"
+        portrayal["text_color"] = "Black"
+
+    elif type(agent) is Coyote:
+        portrayal["Shape"] = "wolf_sheep/resources/coyote.png"
+        # https://icons8.com/web-app/36821/German-Shepherd
+        portrayal["scale"] = 0.9
+        portrayal["Layer"] = 2
+        portrayal["text"] = round(agent.energy, 1)
+        portrayal["text_color"] = "Black"
 
     elif type(agent) is GrassPatch:
         if agent.fully_grown:

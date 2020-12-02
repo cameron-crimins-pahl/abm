@@ -82,6 +82,8 @@ class WolfSheep(Model):
         width           = cfg.dimensions(),
         initial_sheep   = cfg.initial_carcs(),
         initial_wolves  = cfg.initial_allsrs(),
+        initial_coyotes = 5,
+        initial_goats   = 5
         sheep_reproduce = 0.04,
         wolf_reproduce  = 0.05,
         wolf_gain_from_food = cfg.wolf_gn(),
@@ -108,6 +110,8 @@ class WolfSheep(Model):
         self.width = width
         self.initial_sheep = initial_sheep
         self.initial_wolves = initial_wolves
+        self.initial_goats = initial_goats
+        self.initial_coyotes = initial_coyotes
         self.sheep_reproduce = sheep_reproduce
         self.wolf_reproduce = wolf_reproduce
         self.wolf_gain_from_food = wolf_gain_from_food
@@ -119,8 +123,10 @@ class WolfSheep(Model):
         self.grid = MultiGrid(self.height, self.width, torus=True)
         self.datacollector = DataCollector(
             {
-                "Wolves": lambda m: m.schedule.get_breed_count(Wolf),
-                "Sheep": lambda m: m.schedule.get_breed_count(Sheep),
+                "Wolves" : lambda m: m.schedule.get_breed_count(Wolf),
+                "Sheep"  : lambda m: m.schedule.get_breed_count(Sheep),
+                "Coyotes": lambda m: m.schedule.get_breed_count(Coyote),
+                "Goats"  :lambda m: m.schedule.get_breed_count(Goat),
             }
         )
 
@@ -132,6 +138,24 @@ class WolfSheep(Model):
             sheep = Sheep(self.next_id(), (x, y), self, True, energy)
             self.grid.place_agent(sheep, (x, y))
             self.schedule.add(sheep)
+
+        # Create goats
+        for i in range(self.initial_goats):
+            x = self.random.randrange(self.width)
+            y = self.random.randrange(self.height)
+            energy = self.random.randrange(2 * self.wolf_gain_from_food)
+            goat = Goat(self.next_id(), (x, y), self, True, energy)
+            self.grid.place_agent(goat, (x, y))
+            self.schedule.add(goat)
+
+        # Create coyotes
+        for i in range(self.initial_coyotes):
+            x = self.random.randrange(self.width)
+            y = self.random.randrange(self.height)
+            energy = self.random.randrange(2 * self.wolf_gain_from_food)
+            coyote = Coyote(self.next_id(), (x, y), self, True, energy)
+            self.grid.place_agent(coyote, (x, y))
+            self.schedule.add(coyote)
 
         # Create wolves
         for i in range(self.initial_wolves):
