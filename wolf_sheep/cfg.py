@@ -1,6 +1,9 @@
-import plot_thickens as pt
+from wolf_sheep import plot_thickens as pt
+# import plot_thickens as pt
 import subprocess
 import os
+import numpy as np
+import random
 
 
 def dimensions():
@@ -26,7 +29,15 @@ def initial_carcs():
     return 3
 
 def initial_allsrs():
+    a = 1
+    return a
+
+def initial_srphs():
     a = 30
+    return a
+
+def initial_cmrser():
+    a = 14
     return a
 
 def saurp_mass():
@@ -34,17 +45,17 @@ def saurp_mass():
     return m
 
 def allsr_reprd_rte():
-    m = .02
+    m = .2
     return m
 
 def goat_reprd_rte():
-    m = .02
+    m = .05
     return m
 
 def saurp_crcs_apprnce_rate():
 
     """.85 per day"""
-    r = .85
+    r = .99
     return r
 
 def goat_size_at_birth():
@@ -59,9 +70,10 @@ def goat_size_at_birth():
     # d = np.add(vn,abs(np.min(vn)))
 
     vn= np.sort(vn)
-    print(vn)
+    # print("random")
+    # print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])[0])
 
-    return random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])
+    return random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])[0]
     # print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15]))
 
 
@@ -81,7 +93,8 @@ metab_dkt = {9.04   :"1000kg_varanid"
     #    Gene D - 25% chance to kill on contact of living sauropod 35% to be killed, rest of % draw"""
 def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
             , saurp_mass, carcass_apprnce_rte, totl_allsrs, totl_crcs
-            , mx_pop_allsr, len_sim):
+            , mx_pop_allsr, len_sim
+            , intl_cyts, intl_gts, mx_pop_cyte, mx_pop_goats):
 
     """extinct=TRUE if days didn't reach 365
        competition = TRUE if multiple phenotypes compete for resources"""
@@ -95,6 +108,8 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     "max food consumption rate      : "+str(wolf_gn)+"kg/day \n"+\
     "carcass detection radius       : "+str(rdius)+"km\n"+\
     "initial allosaur population    : "+str(intl_als)+"\n"+\
+    "initial srpghgnx population    : "+str(intl_cyts)+"\n"+\
+    "initial live srpd population   : "+str(intl_gts)+"\n"+\
     "initial carcass population     : "+str(intl_crcs)+"\n"+\
     "max carcass mass               : "+str(saurp_mass)+"\n"+\
     "average distance of carcass when first detected : \n"+\
@@ -111,10 +126,13 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     "total allosaurs made           : "+str(totl_allsrs)+"\n"+\
     "---allosaurs pop plateau reached at day 160 ish, between 1750-1899---\n"+\
     "total carcasses                : "+str(totl_crcs)+"\n" +\
+    "total live srpds               : "+str(mx_pop_goats)+"\n" +\
     "actual max of allosaurs        : "+str(mx_pop_allsr)+"\n" +\
+    "actual max of  srphgnx         : "+str(mx_pop_cyte)+"\n" +\
     "theoretical max of allosaurs   : "+str( thrtcl_max_allsrs )+"\n" +\
     "In gross terms "+str(totl_crcs)+" carcasses at "+str(saurp_mass)+" kg is enough to feed "+ str( ((saurp_mass * totl_crcs)/365)/fmr_cost ) +" allosaurs\n"+\
     "-- "+str(mx_pop_allsr)+" is "+str( (mx_pop_allsr-thrtcl_max_allsrs)/thrtcl_max_allsrs )+"% of theoretical max\n"+\
+    "-- "+str(mx_pop_cyte)+" is "+str( (mx_pop_cyte-thrtcl_max_allsrs)/thrtcl_max_allsrs )+"% of theoretical max\n"+\
     "total living adult sauropod pop: "+str(totl_crcs*20)+"\n"+\
     "sauropod density               : "+str( ((totl_crcs/3)*10)/(dmnsn * dmnsn))+" / km2\n"+\
     "allosaur density               : "+str( mx_pop_allsr/(dmnsn * dmnsn))+ " /km2\n"+\
@@ -122,8 +140,8 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     "allosaurs that starved         :\n"+\
     "avg swarm size per carcass     :\n"
 
-    print(txt)
-    print(os.path.dirname(os.path.realpath(__file__)))
+    # print(txt)
+    # print(os.path.dirname(os.path.realpath(__file__)))
 
     # new_path = os.path.dirname(os.path.realpath(__file__))+"/"+str(metab_dkt[fmr_cost])
     new_path = "/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/"+str(metab_dkt[fmr_cost])+"-test"
@@ -137,8 +155,8 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     subprocess.call("mkdir "+new_path, shell=True)
     #"/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png"
     "45000kg_saurp-extinct-FALSE-competition.txt"
-    f       = open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE-seasons-FALSE-sr-"+str(rdius)+".txt","w")
-    fg      =      new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE-seasons-FALSE-sr-"+str(rdius)+".png"
+    f       = open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-FALSE-sr-"+str(rdius)+".txt","w")
+    fg      =      new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-FALSE-sr-"+str(rdius)+".png"
     print(fg)
     f.write(txt)
     pt.plot_allsr_vs_carcass(fg)

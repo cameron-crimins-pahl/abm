@@ -14,16 +14,19 @@ from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
 
 
-from agents import Sheep, Wolf, GrassPatch
-from schedule import RandomActivationByBreed
-import agents
+# from agents import Sheep, Wolf, GrassPatch, Goat, Coyote
+# from schedule import RandomActivationByBreed
+# import agents
 
-import cfg
-import plot_thickens as pt
+# import cfg
+# import plot_thickens as pt
 #
 # # #
-# from wolf_sheep.agents import Sheep, Wolf, GrassPatch
-# from wolf_sheep.schedule import RandomActivationByBreed
+from wolf_sheep.agents import Sheep, Wolf, GrassPatch, Goat, Coyote
+from wolf_sheep.schedule import RandomActivationByBreed
+import wolf_sheep.cfg as cfg
+import wolf_sheep.agents as agents
+import wolf_sheep.plot_thickens as pt
 
 
 class WolfSheep(Model):
@@ -82,8 +85,8 @@ class WolfSheep(Model):
         width           = cfg.dimensions(),
         initial_sheep   = cfg.initial_carcs(),
         initial_wolves  = cfg.initial_allsrs(),
-        initial_coyotes = 5,
-        initial_goats   = 5
+        initial_coyotes = cfg.initial_srphs(),
+        initial_goats   = cfg.initial_cmrser(),
         sheep_reproduce = 0.04,
         wolf_reproduce  = 0.05,
         wolf_gain_from_food = cfg.wolf_gn(),
@@ -195,6 +198,8 @@ class WolfSheep(Model):
                     self.schedule.time,
                     self.schedule.get_breed_count(Wolf),
                     self.schedule.get_breed_count(Sheep),
+                    self.schedule.get_breed_count(Goat),
+                    self.schedule.get_breed_count(Coyote)
                 ]
             )
 
@@ -238,9 +243,10 @@ if __name__=="__main__":
     #
     md = WolfSheep()
     #
-    for itms in range(365):
+    for itms in range(150):
         md.step()
 
     cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.fmr_cost(), cfg.initial_carcs(), cfg.initial_allsrs()
                 , cfg.saurp_mass(), cfg.saurp_crcs_apprnce_rate(), pt.total_allosaurs(), pt.total_carcasses()
-                , pt.max_allsr(), pt.day_steps())
+                , pt.max_allsr(), pt.day_steps(),
+                pt.max_srphgnx(), cfg.initial_cmrser(), pt.max_srphgnx(), pt.max_cmrsrs())

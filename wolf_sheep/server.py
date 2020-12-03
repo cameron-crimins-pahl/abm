@@ -5,7 +5,7 @@ from mesa.visualization.UserParam import UserSettableParameter
 from wolf_sheep.agents import Wolf, Sheep, GrassPatch, Coyote, Goat
 from wolf_sheep.model import WolfSheep
 
-import cfg
+import wolf_sheep.cfg as cfg
 
 
 def wolf_sheep_portrayal(agent):
@@ -17,34 +17,43 @@ def wolf_sheep_portrayal(agent):
     portrayal = {}
 
     if type(agent) is Sheep:
-        portrayal["Shape"] = "wolf_sheep/resources/sheep.png"
+        portrayal["Color"] = ["#FFD369"]
+        # portrayal["Shape"] = "square"
+        # portrayal["Filled"] = "true"
+        portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/sheep.png"
         # https://icons8.com/web-app/433/sheep
-        portrayal["text"] = round(agent.energy, 1)
+        # portrayal["text"] = round(agent.energy, 1)
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 1
 
     elif type(agent) is Goat:
-        portrayal["Shape"] = "wolf_sheep/resources/goat.png"
+        # portrayal["Color"] = ["#EC5858"]
+        # portrayal["Shape"] = "square"
+        portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/goat.png"
         # https://icons8.com/web-app/36821/German-Shepherd
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
-        portrayal["text"] = round(agent.energy, 1)
+        # portrayal["text"] = round(agent.energy, 1)
         portrayal["text_color"] = "Black"
 
     elif type(agent) is Wolf:
-        portrayal["Shape"] = "wolf_sheep/resources/wolf.png"
+        # portrayal["Color"] = ["#222831"]
+        # portrayal["Shape"] = "circle"
+        portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/wolf.png"
         # https://icons8.com/web-app/36821/German-Shepherd
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
-        portrayal["text"] = round(agent.energy, 1)
+        # portrayal["text"] = round(agent.energy, 1)
         portrayal["text_color"] = "Black"
 
     elif type(agent) is Coyote:
-        portrayal["Shape"] = "wolf_sheep/resources/coyote.png"
+        # portrayal["Color"] = ["#0E918C"]
+        # portrayal["Shape"] = "circle"
+        portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/coyote.png"
         # https://icons8.com/web-app/36821/German-Shepherd
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
-        portrayal["text"] = round(agent.energy, 1)
+        # portrayal["text"] = round(agent.energy, 1)
         portrayal["text_color"] = "Black"
 
     elif type(agent) is GrassPatch:
@@ -63,7 +72,10 @@ def wolf_sheep_portrayal(agent):
 
 canvas_element = CanvasGrid(wolf_sheep_portrayal, cfg.dimensions(), cfg.dimensions(), 500, 500)
 chart_element = ChartModule(
-    [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
+    [{"Label": "Wolves" , "Color"  : "#222831"}
+    ,{"Label": "Sheep"  , "Color"  : "#FFD369"}
+    ,{"Label": "Coyotes", "Color"  : "#0E918C"}
+    ,{"Label": "Goats"  , "Color"  : "#EC5858"}]
 )
 
 model_params = {
@@ -72,21 +84,12 @@ model_params = {
         "slider", "Grass Regrowth Time", 20, 1, 50
     ),
     "initial_sheep": UserSettableParameter(
-        "slider", "Initial Sheep Population", 100, 1, 300
-    ),
-    "sheep_reproduce": UserSettableParameter(
-        "slider", "Sheep Reproduction Rate", 0.04, 0.01, 1.0, 0.01
-    ),
-    "initial_wolves": UserSettableParameter(
-        "slider", "Initial Wolf Population", 50, 1, 300
-    ),
-    "wolf_reproduce": UserSettableParameter(
-        "slider",
-        "Wolf Reproduction Rate",
-        0.05,
-        0.01,
+        "slider", "Initial Sheep Population", 100, 1, 300)
+    ,
+    "sheep_reproduce": UserSettableParameter("slider", "Sheep Reproduction Rate", .04, .01, 1.0, .01),
+     "initial_wolves": UserSettableParameter("slider", "Initial Wolf Population", 50, 1, 300),
+    "wolf_reproduce": UserSettableParameter("slider","Wolf Reproduction Rate",.05,0.01,
         1.0,
-        0.01,
         description="The rate at which wolf agents reproduce.",
     ),
     "wolf_gain_from_food": UserSettableParameter(

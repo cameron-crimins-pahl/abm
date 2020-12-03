@@ -40,7 +40,7 @@ def plot_sauropods():
 
     I need to run this model for each metabolism where 1 dead sauropod and n number of allosaurs eat it. then get the data
     about how carcasses are consumed  with COMPETITION"""
-    print(df["unique_id"].nunique())
+    # print(df["unique_id"].nunique())
 
     # step_no = x axis
     # enrgy = y axis
@@ -63,12 +63,12 @@ def sauropod_neighbors():
 def sauropod_data():
     df = pd.read_csv("sheep_data_sheet.csv")
     "unique sauropod carcasses"
-    print("ttl sauropods")
+    # print("ttl sauropods")
 
 
 
     ttl_saurp = df["unique_id"].nunique()
-    print(ttl_saurp)
+    # print(ttl_saurp)
 
     # print(df.head())
 
@@ -93,40 +93,97 @@ def sauropod_data():
     #
     df = df.reset_index()
 
-    df["animal"]="sauropod"
+    df["animal"]="sauropod carcasses"
 
     df =df[["step_no","unique_id","animal"]]
 
     df.columns = ["step_no","count","animal"]
-    print(df)
+    # print(df)
 
 
     return df
+
+def cmrsrs_data():
+    df = pd.read_csv("goat_data_sheet.csv")
+    "unique sauropod carcasses"
+    # print("ttl cmrsrs")
+
+    ttl_saurp = df["unique_id"].nunique()
+
+
+    df = df.groupby(["step_no"]).count()
+    #
+    df = df.reset_index()
+
+    df["animal"]="living sauropods"
+
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","count","animal"]
+    # print(df)
+    return df
+
+def srphgnx_data():
+    df = pd.read_csv("coyote_data_sheet.csv")
+    "unique sauropod carcasses"
+    # print("ttl srphgnx")
+
+    ttl_saurp = df["unique_id"].nunique()
+
+
+    df = df.groupby(["step_no"]).count()
+    #
+    df = df.reset_index()
+
+    df["animal"]="allosaur-predators"
+
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","count","animal"]
+    # print(df)
+    return df
+
 
 def total_allosaurs():
     df = pd.read_csv("wolf_data_sheet.csv")
     # print(df[df["step_no"]==1])
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
-    "unique allosaur carcasses"
-    print("ttl allosaurs")
     ttl_allsr = df["unique_id"].nunique()
-    print(ttl_allsr)
+    # print(ttl_allsr)
     return ttl_allsr
 
 def total_carcasses():
     df = pd.read_csv("sheep_data_sheet.csv")
     "unique sauropod carcasses"
-    print("ttl sauropods")
+    # print("ttl sauropods")
     ttl_saurp = df["unique_id"].nunique()
-    print(ttl_saurp)
+    # print(ttl_saurp)
     return ttl_saurp
 
 def max_allsr():
     df = pd.read_csv("wolf_data_sheet.csv")
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
-    df["animal"]="allosaur"
-    print(df.columns)
+    df["animal"]="allosaur-scavengers"
+    # print(df.columns)
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","count","animal"]
+    return df["count"].max()
+
+def max_srphgnx():
+    df = pd.read_csv("coyote_data_sheet.csv")
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    df["animal"]="allosaur-predators"
+    # print(df.columns)
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","count","animal"]
+    return df["count"].max()
+
+def max_cmrsrs():
+    df = pd.read_csv("goat_data_sheet.csv")
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    df["animal"]="live sauropods"
+    # print(df.columns)
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
     return df["count"].max()
@@ -153,11 +210,15 @@ def plot_allsr_vs_carcass(f_pth):
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
 
     df_saurp = sauropod_data()
+    df_cmr = cmrsrs_data()
+    df_srph = srphgnx_data()
+
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
     df["animal"]="allosaur"
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
+
     neighbs = sauropod_neighbors()
 
     # neighbs = dict(zip(neighbs["step_no"],neighbs["consuming_wolves"]))
@@ -168,6 +229,8 @@ def plot_allsr_vs_carcass(f_pth):
     # df.columns = ["step_no","allsr","srp"]
 
     df = df.append(df_saurp,ignore_index=True)
+    df = df.append(df_cmr,ignore_index=True)
+    df = df.append(df_srph,ignore_index=True)
 
     # df = df.pivot(index='x', columns='color', values='y')
     df = df.pivot(index='step_no', columns='animal', values='count')
@@ -192,6 +255,6 @@ def pop_check():
 
 if __name__=="__main__":
 
-    freq_check()
+    # freq_check()
 
-    # plot_allsr_vs_carcass()s
+    plot_allsr_vs_carcass()

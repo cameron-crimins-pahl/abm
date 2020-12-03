@@ -1,6 +1,9 @@
 from mesa import Agent
-from random_walk import RandomWalker
-# from wolf_sheep.random_walk import RandomWalker
+# from random_walk import RandomWalker
+# import cfg
+
+from wolf_sheep.random_walk import RandomWalker
+import wolf_sheep.cfg as cfg
 
 
 import pandas as pd
@@ -11,7 +14,7 @@ import math
 import random
 from scipy import spatial
 import networkx as nx
-import cfg
+
 
 dfw = pd.DataFrame([])
 dfs = pd.DataFrame([])
@@ -36,10 +39,7 @@ class Sheep(RandomWalker):
     A sheep that walks around, reproduces (asexually) and gets eaten.
     The init is the same as the RandomWalker. the time thing must be related to this_cell
     """
-
     energy = None
-
-
 
     def __init__(self, unique_id, pos, model, moore, energy=None):
         super().__init__(unique_id, pos, model, moore=moore)
@@ -53,9 +53,6 @@ class Sheep(RandomWalker):
         # print("sheep energy is "+ str(self.energy))
         """the sheep's lifespan is len(dfs[dfs["unique_id"]==unique_id])
         I need to solve this datafraem problem"""
-
-
-
 
     def step(self):
 
@@ -75,8 +72,6 @@ class Sheep(RandomWalker):
         da = data[data["unique_id"]==self.unique_id]
 
         self.age = len(da.index)
-
-
         """
         A model step. Move, then eat grass and reproduce.
 
@@ -130,11 +125,11 @@ class Sheep(RandomWalker):
 
         # print(da["reproduced"].tolist())
         rprd = "false"
-        print("sheep schedule time 134")
-        print(self.model.schedule.time)
+        # print("sheep schedule time 134")
+        # print(self.model.schedule.time)
         days = self.model.schedule.time
         nt = data["unique_id"].nunique()
-        print("unique ids:",nt)
+        # print("unique ids:",nt)
 
         """if total number of created carcasses / steps is greater than 1.3,
         do nothing,
@@ -148,8 +143,6 @@ class Sheep(RandomWalker):
         also the situation with adults is that if the allosaur hits an adult more than 2x its own mass
         it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
         """
-
-
 
         if days > 0:
 
@@ -260,7 +253,7 @@ class Wolf(RandomWalker):
 
            """
 
-        self.energy +=200
+        self.energy +=50
         """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
 
     def step(self):
@@ -279,7 +272,9 @@ class Wolf(RandomWalker):
             return pth[1]
 
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
+        print(self.energy)
         self.energy -= cfg.fmr_cost()
+        print(self.energy)
         nrg = self.energy
         """ it costs self.energy to move"""
 
@@ -307,7 +302,7 @@ class Wolf(RandomWalker):
 
         sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
 
-        nw_nrg = self.energy
+        # nw_nrg = self.energy
 
         # dist_f_carc = "None detected"
 
@@ -331,8 +326,8 @@ class Wolf(RandomWalker):
             clsst_shp = arr[1][0]
 
             sheep_to_eat = sheep[clsst_shp]
-            # print("SHEEP TO TARGET:")
-            # print(sheep_to_eat)
+            print("SHEEP TO TARGET:")
+            print(sheep_to_eat)
             #
             # print("SHEEP TO TARGET COORDINATES:")
             # print(self.pos)
@@ -354,7 +349,7 @@ class Wolf(RandomWalker):
 
             """make a dataframe to record the actions of each agent, if they ate, etc.  """
 
-            # print("sheep from wolf perspective has  " +str()+ " energy")
+            print("sheep from wolf perspective has  " +str(start_e)+ " energy")
             """this selects the random sheep to be consumed """
             self.energy += self.model.wolf_gain_from_food
             sheep_to_eat.energy -= self.model.wolf_gain_from_food
@@ -367,41 +362,48 @@ class Wolf(RandomWalker):
 
         """ if the reptile allosaur's body mass drops by 30%, it dies.
             just as in monitor lizards"""
-        if self.energy < 2:
+        idddd = str(self.unique_id)
+
+        if self.energy < 50:
+            print("dead "+ str(idddd))
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
 
-        else:
+        elif random.random() < cfg.allsr_reprd_rte():
+            print("reproducing "+ str(idddd))
+            # print("line 375, random.random()= "+str(random.random())+" rprd rate "+str(cfg.allsr_reprd_rte()))
             """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
-                or
-                reproduce if step is between 275-280 for breeding season
-                all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
-                sounds dumb
+            or
+            reproduce if step is between 275-280 for breeding season
+            all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
+            sounds dumb
 
-                I think I should do the same thing I did with carcasses.
-                if the ratio of allosaurs to sauropods is lower than x , then reproduce?
-                if total allosaurs per sq km is less than x , then reproduce?
-                or should reproduction not happen?
-                where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
-                how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
+            I think I should do the same thing I did with carcasses.
+            if the ratio of allosaurs to sauropods is lower than x , then reproduce?
+            if total allosaurs per sq km is less than x , then reproduce?
+            or should reproduction not happen?
+            where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
+            how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
 
-            if random.random() < cfg.allsr_reprd_rte():
-            # if self.model.schedule.time in [30,90,180,275,320,420]:
 
-            # if self.random.random() < self.model.wolf_reproduce:
-                # Create a new wolf cub
-                """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-                self.energy *= 0.45
+            """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
+            self.energy *= 0.45
 
-                """new wolves start with 1+x energy"""
+            """new wolves start with 1+x energy"""
 
-                cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
+            cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
-                self.model.grid.place_agent(cub, cub.pos)
+            self.model.grid.place_agent(cub, cub.pos)
 
-                self.model.schedule.add(cub)
+            self.model.schedule.add(cub)
 
-                rprd = "true"
+            print
+
+            rprd = "true"
+            print(cub.energy)
+            print("reprd = " + rprd)
+
+        nw_nrg = self.energy
 
         dkt= {"adjacent_sheep"  :[str(len(sheep))]
             , "unique_id"       :[str(self.unique_id)]
@@ -412,13 +414,14 @@ class Wolf(RandomWalker):
             ,"age"               :[str(self.age)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
 
+        print(dkt)
         dfx = pd.DataFrame(dkt)
         dfx.to_csv("wolf_data_sheet.csv",mode="a",header=False)
 
 
 class Coyote(RandomWalker):
     """
-    A wolf that walks around, reproduces (asexually) and eats sheep.
+    A coyote that walks around, reproduces (asexually) and either scavenges or kills other animals.
     """
 
     energy = None
@@ -440,9 +443,13 @@ class Coyote(RandomWalker):
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
         self.energy -= cfg.fmr_cost()
         nrg = self.energy
+        nw_nrg = self.energy
+        rprd="false"
         """ it costs self.energy per day to live fmr"""
 
         data = pd.read_csv("coyote_data_sheet.csv")
+
+        killer ="false"
 
         da = data[data["unique_id"]==self.unique_id]
 
@@ -458,10 +465,50 @@ class Coyote(RandomWalker):
            """
 
         this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
+        this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
+        sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
 
-        goats = [obj for obj in this_cell if isinstance(obj, Goat)]
+        goats = [obj for obj in this_cell_close if isinstance(obj, Goat)]
 
         if len(goats) > 0:
+            goat_to_eat = self.random.choice(goats)
+
+            nbr = random.random()
+
+            if goat_to_eat.energy<4000:
+                print("goat_to_eat")
+
+                print(goat_to_eat.energy)
+                print(goat_to_eat)
+
+                if nbr < .35:
+
+                    self.energy += self.model.wolf_gain_from_food
+                    killer="true"
+
+            # Kill the sheep if odds favor it and if goat is small enough:
+
+                    self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
+                    self.model.schedule.remove(goat_to_eat)
+                    nw_nrg = self.energy
+
+                elif nbr >= .36 and nbr <= .50:
+
+                    self.model.grid._remove_agent(self.pos, self)
+                    self.model.schedule.remove(self)
+        elif len(sheep) > 0:
+
+
+
+            """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
+                self.model.grid.get_neighbors is better
+            2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
+            and I need to make them stay at a carcass once they find  it,"""
+
+            nw_nrg = self.energy
+
+            """this captures the list of all sheep objects within 10 step radius of the wolf
+                    wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
 
             cls_shp = []
 
@@ -469,122 +516,60 @@ class Coyote(RandomWalker):
                 """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
                 cls_shp.append(ps.pos)
 
-            goat_to_eat = self.random.choice(goats)
+            tree = spatial.KDTree(cls_shp)
 
-            nbr = random.random()
+            arr = tree.query([self.pos])
 
-            if goats.energy<4000:
+            clsst_shp = arr[1][0]
 
-                if nbr < .35:
+            sheep_to_eat = sheep[clsst_shp]
 
-                    self.energy += self.model.wolf_gain_from_food
+            to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
 
-            # Kill the sheep if odds favor it and if goat is small enough:
+            self.non_random_move(to_trgt)
 
-                    self.model.grid._remove_agent(self.pos, goat_to_eat)
-                    self.model.schedule.remove(goat_to_eat)
+            start_e = sheep_to_eat.energy
 
-                elif nbr >= .36 and nbr <= .50:
-
-                    self.model.grid._remove_agent(self.pos, self)
-                    self.model.schedule.remove(self)
-        else:
-
-            this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
-
-            """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
-                self.model.grid.get_neighbors is better
-            2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
-            and I need to make them stay at a carcass once they find  it,"""
-
-            sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
-
+            """this selects the random sheep to be consumed """
+            self.energy += self.model.wolf_gain_from_food
+            sheep_to_eat.energy -= self.model.wolf_gain_from_food
             nw_nrg = self.energy
 
-            # dist_f_carc = "None detected"
-
-            # if random.random() < .02:
-
-            if len(sheep) > 0:
-
-                """this captures the list of all sheep objects within 10 step radius of the wolf
-                    wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
-
-                cls_shp = []
-
-                for ps in sheep:
-                    """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
-                    cls_shp.append(ps.pos)
-
-                tree = spatial.KDTree(cls_shp)
-
-                arr = tree.query([self.pos])
-
-                clsst_shp = arr[1][0]
-
-                sheep_to_eat = sheep[clsst_shp]
-
-                to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
-
-                self.non_random_move(to_trgt)
-
-                start_e = sheep_to_eat.energy
-
-                """this selects the random sheep to be consumed """
-                self.energy += self.model.wolf_gain_from_food
-                sheep_to_eat.energy -= self.model.wolf_gain_from_food
-                nw_nrg = self.energy
-
-            else:
-                self.random_move()
+        else:
+            self.random_move()
 
             rprd = "false"
 
             """ if the reptile allosaur's body mass drops by 30%, it dies.
                 just as in monitor lizards"""
-            if self.energy < 2:
-                self.model.grid._remove_agent(self.pos, self)
-                self.model.schedule.remove(self)
+        if self.energy < 2:
+            self.model.grid._remove_agent(self.pos, self)
+            self.model.schedule.remove(self)
 
-            else:
-                """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
-                    or
-                    reproduce if step is between 275-280 for breeding season
-                    all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
-                    sounds dumb
+        else:
+            if random.random() < cfg.allsr_reprd_rte():
 
-                    I think I should do the same thing I did with carcasses.
-                    if the ratio of allosaurs to sauropods is lower than x , then reproduce?
-                    if total allosaurs per sq km is less than x , then reproduce?
-                    or should reproduction not happen?
-                    where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
-                    how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
+                """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
+                self.energy *= 0.45
 
-                if random.random() < cfg.allsr_reprd_rte():
-                # if self.model.schedule.time in [30,90,180,275,320,420]:
+                """new wolves start with 1+x energy"""
 
-                # if self.random.random() < self.model.wolf_reproduce:
-                    # Create a new wolf cub
-                    """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-                    self.energy *= 0.45
+                cb = Coyote(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
-                    """new wolves start with 1+x energy"""
+                self.model.grid.place_agent(cb, cb.pos)
 
-                    cub = Wolf(self.model.next_id(), self.pos, self.model, self.moore, 1)
+                self.model.schedule.add(cb)
 
-                    self.model.grid.place_agent(cub, cub.pos)
+                rprd = "true"
 
-                    self.model.schedule.add(cub)
-
-                    rprd = "true"
-
-        dkt= {"adjacent_sheep"  :[str(len(sheep))]
-            , "unique_id"       :[str(self.unique_id)]
-            , "initial_energy"  :[str(nrg)]
+        dkt= {"adjacent_sheep"   :[str(len(sheep))]
+            , "unique_id"        :[str(self.unique_id)]
+            , "initial_energy"   :[str(nrg)]
             , "resulting_energy" :[str(nw_nrg)]
             , "reproduced"       :[str(rprd)]
             ,"step_no"           :[str(self.model.schedule.time)]
-            ,"age"               :[str(self.age)]}
+            ,"age"               :[str(self.age)]
+            ,"killed_something"  :[str(killer)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
 
         dfx = pd.DataFrame(dkt)
@@ -605,13 +590,18 @@ class Goat(RandomWalker):
         # self.energy += cfg.saurp_mass()
         self.energy += cfg.goat_size_at_birth()
 
+        data = pd.read_csv("goat_data_sheet.csv")
+
+        da = data[data["unique_id"]==self.unique_id]
+
+        self.age = len(da.index)
+
     def step(self):
         """
         A model step. Move, then eat grass and reproduce.
         """
         self.random_move()
 
-        living = True
 
         nrg = self.energy
 
@@ -619,12 +609,11 @@ class Goat(RandomWalker):
 
         nw_nrg = self.energy
 
-        if self.energy < 500:
+        if self.energy < 200:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
-            living = False
 
-        if living and self.random.random() < cfg.goat_reprd_rte():
+        if self.random.random() < cfg.goat_reprd_rte():
             rprd="true"
             self.energy /= 2
 
@@ -632,15 +621,13 @@ class Goat(RandomWalker):
             ny = random.randrange(cfg.dimensions())
 
             self.npos = (nx,ny)
-            lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
-            self.model.grid.place_agent(lamb, self.npos)
-            self.model.schedule.add(lamb)
+            lmb = Goat(self.model.next_id(), self.npos, self.model, self.moore, 1)
+            self.model.grid.place_agent(lmb, self.npos)
+            self.model.schedule.add(lmb)
 
-            lamb = Goat(self.model.next_id(), self.pos, self.model, self.moore, 1)
 
-            self.model.grid.place_agent(lamb, self.pos)
-
-            self.model.schedule.add(lamb)
+        else:
+            rprd="false"
 
         dst= {"unique_id"         :[str(self.unique_id)]
             , "initial_energy"    :[str(nrg)]
