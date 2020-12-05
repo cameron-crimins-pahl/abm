@@ -251,7 +251,7 @@ if __name__=="__main__":
     #
     md = WolfSheep()
     # #
-    for itms in range(10):
+    for itms in range(2):
         md.step()
 
     cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.fmr_cost(), cfg.initial_carcs(), cfg.initial_allsrs()

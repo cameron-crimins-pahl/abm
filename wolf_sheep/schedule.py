@@ -9,6 +9,8 @@ import pandas as pd
 
 
 def f(ob):
+    print(ob)
+    print("stepped-function")
     return ob.step()
 
 class RandomActivationByBreed(RandomActivation):
@@ -55,7 +57,42 @@ class RandomActivationByBreed(RandomActivation):
             by_breed: If True, run all agents of a single breed before running
                       the next one.
         """
+
         if by_breed:
+            dkt = self.agents_by_breed
+            ded = pd.DataFrame.from_dict(dkt,orient="index").transpose()
+            # ded = ded.fillna("")
+            # # ded.columns = ["A"]
+            # print(ded)
+            # print(ded.columns)
+
+            da = ded.iloc[:,0]
+            da = da[da.notna()]
+            da = da.tolist()
+
+            db = ded.iloc[:,1]
+            db = db[db.notna()]
+            db = db.tolist()
+
+
+            dc = ded.iloc[:,2]
+            dc = dc[dc.notna()]
+            dc = dc.tolist()
+
+            dd = ded.iloc[:,3]
+            dd = dd[dd.notna()]
+            dd = dd.tolist()
+
+            # print("da")
+
+            # print(da)
+            objcts = [da,db,dc,dd]
+            # dl = ded["A"].tolist()
+            #
+            #  p = Pool()
+            #
+            # """"""
+            #  p.apply_async(f,args=(dl,))
 
             # nl = list(range(len(self.agents_by_breed)))
             # print(self.agents_by_breed)
@@ -67,18 +104,29 @@ class RandomActivationByBreed(RandomActivation):
             # print("keys")
             # agent_keys = list(self.agents_by_breed[breed].keys())
 
+            for itms in objcts:
+                print(itms)
+
+                self.step_breed(itms)
+
+
             # print(self.agents_by_breed.keys())
-            for agent_class in self.agents_by_breed:
-                # print("agent class")
-                print(agent_class)
-                self.step_breed(agent_class)
+            # for agent_class in self.agents_by_breed:
+            #     """agent class is breed"""
+            #     print("agent class step keys")
+            #     agent_keys = list(self.agents_by_breed[agent_class].keys())
+            #     print(agent_keys)
+            #     for agent_key in agent_keys:
+            #     # print(self.agents_by_breed)
+            #         print(self.agents_by_breed[agent_class][agent_key])
+            #         print(agent_class)
+            #         self.step_breed(self.agents_by_breed[agent_class][agent_key])
+                # self.step_breed(agent_class)
+
             self.steps += 1
             self.time  += 1
         else:
             super().step()
-
-
-
 
 
     def step_breed(self, breed):
@@ -88,30 +136,39 @@ class RandomActivationByBreed(RandomActivation):
             breed: Class object of the breed to run.
         """
 
-        agent_keys = list(self.agents_by_breed[breed].keys())
-        self.model.random.shuffle(agent_keys)
-
+        # agent_keys = list(self.agents_by_breed[breed].keys())
+        # self.model.random.shuffle(agent_keys)
+        #
         # dkt = self.agents_by_breed[breed]
+        # print("step-breed")
         # # print(dkt)
         # ded = pd.DataFrame.from_dict(dkt,orient="index")
         #
         # ded.columns = ["A"]
-        # print(ded)
+        # print(ded["A"].iloc[0])
         # dl = ded["A"].tolist()
+        # print(dl)
 
-        # p = Pool()
+        # f(ded["A"].iloc[0])
+
+        print("breed list")
+        print(breed)
+
+        p = Pool()
 
         """"""
+        p.map(f,breed)
         # p.apply_async(f,args=(dl,))
+        # print("stepped")
 
         #
-        for agent_key in agent_keys:
-
-            print("agent_key iterator")
-
-            print(self.agents_by_breed[breed][agent_key])
-
-            self.agents_by_breed[breed][agent_key].step()
+        # for agent_key in agent_keys:
+        #
+        #     print("agent_key iterator")
+        #
+        #     print(self.agents_by_breed[breed][agent_key])
+        #
+        #     self.agents_by_breed[breed][agent_key].step()
 
     def get_breed_count(self, breed_class):
         """
