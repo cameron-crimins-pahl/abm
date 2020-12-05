@@ -1,5 +1,5 @@
-from wolf_sheep import plot_thickens as pt
-# import plot_thickens as pt
+# from wolf_sheep import plot_thickens as pt
+import plot_thickens as pt
 import subprocess
 import os
 import numpy as np
@@ -29,7 +29,7 @@ def initial_carcs():
     return 3
 
 def initial_allsrs():
-    a = 1
+    a = 30
     return a
 
 def initial_srphs():
@@ -45,17 +45,19 @@ def saurp_mass():
     return m
 
 def allsr_reprd_rte():
-    m = .2
+    m = .02
     return m
 
 def goat_reprd_rte():
-    m = .05
+    # m = 1.9
+    m = random.uniform(18,25)
     return m
 
 def saurp_crcs_apprnce_rate():
 
     """.85 per day"""
-    r = .99
+    # r = .99
+    r = random.uniform(.75,.9)
     return r
 
 def goat_size_at_birth():

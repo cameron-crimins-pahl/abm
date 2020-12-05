@@ -1,9 +1,9 @@
 from mesa import Agent
-# from random_walk import RandomWalker
-# import cfg
-
-from wolf_sheep.random_walk import RandomWalker
-import wolf_sheep.cfg as cfg
+from random_walk import RandomWalker
+import cfg
+# import wolf_sheep.plot_thickens as pt
+# from wolf_sheep.random_walk import RandomWalker
+# import wolf_sheep.cfg as cfg
 
 
 import pandas as pd
@@ -144,6 +144,8 @@ class Sheep(RandomWalker):
         it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
         """
 
+        # carcs_per_day(nt,days)
+        print("day "+str(days))
         if days > 0:
 
             print(carcs_per_day(nt,days))
@@ -152,7 +154,7 @@ class Sheep(RandomWalker):
             if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
 
                     # print("CARCS PER DAY")
-                    # print(carcs_per_day(nt,days))
+                    print(carcs_per_day(nt,days))
 
                     """if the carcass hasn't reproduced yet, make a new carcass
                        otherwise collect the data and do nothing"""
@@ -177,6 +179,7 @@ class Sheep(RandomWalker):
                     lamb = Sheep(self.model.next_id(), self.npos, self.model, self.moore, 1)
                     self.model.grid.place_agent(lamb, self.npos)
                     self.model.schedule.add(lamb)
+                    print("new lamb position = "+str(lamb.pos))
 
         dst= {"consuming_wolves"  :[str(len(wlvs))]
             , "unique_id"         :[str(self.unique_id)]
@@ -253,7 +256,7 @@ class Wolf(RandomWalker):
 
            """
 
-        self.energy +=50
+        self.energy +=200
         """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
 
     def step(self):
@@ -272,9 +275,9 @@ class Wolf(RandomWalker):
             return pth[1]
 
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
-        print(self.energy)
+        # print(self.energy)
         self.energy -= cfg.fmr_cost()
-        print(self.energy)
+        # print(self.energy)
         nrg = self.energy
         """ it costs self.energy to move"""
 
@@ -326,8 +329,8 @@ class Wolf(RandomWalker):
             clsst_shp = arr[1][0]
 
             sheep_to_eat = sheep[clsst_shp]
-            print("SHEEP TO TARGET:")
-            print(sheep_to_eat)
+            # print("SHEEP TO TARGET:")
+            # print(sheep_to_eat)
             #
             # print("SHEEP TO TARGET COORDINATES:")
             # print(self.pos)
@@ -349,7 +352,7 @@ class Wolf(RandomWalker):
 
             """make a dataframe to record the actions of each agent, if they ate, etc.  """
 
-            print("sheep from wolf perspective has  " +str(start_e)+ " energy")
+            # print("sheep from wolf perspective has  " +str(start_e)+ " energy")
             """this selects the random sheep to be consumed """
             self.energy += self.model.wolf_gain_from_food
             sheep_to_eat.energy -= self.model.wolf_gain_from_food
@@ -365,8 +368,9 @@ class Wolf(RandomWalker):
         idddd = str(self.unique_id)
 
         if self.energy < 50:
-            print("dead "+ str(idddd))
+            print("wolf dead "+ str(idddd))
             self.model.grid._remove_agent(self.pos, self)
+            print(self)
             self.model.schedule.remove(self)
 
         elif random.random() < cfg.allsr_reprd_rte():
@@ -397,7 +401,7 @@ class Wolf(RandomWalker):
 
             self.model.schedule.add(cub)
 
-            print
+
 
             rprd = "true"
             print(cub.energy)
@@ -414,7 +418,7 @@ class Wolf(RandomWalker):
             ,"age"               :[str(self.age)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
 
-        print(dkt)
+        # print(dkt)
         dfx = pd.DataFrame(dkt)
         dfx.to_csv("wolf_data_sheet.csv",mode="a",header=False)
 
@@ -442,9 +446,10 @@ class Coyote(RandomWalker):
 
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
         self.energy -= cfg.fmr_cost()
-        nrg = self.energy
-        nw_nrg = self.energy
-        rprd="false"
+
+        nrg         = self.energy
+        nw_nrg      = self.energy
+        rprd        = "false"
         """ it costs self.energy per day to live fmr"""
 
         data = pd.read_csv("coyote_data_sheet.csv")
@@ -455,102 +460,122 @@ class Coyote(RandomWalker):
 
         self.age = len(da.index)
 
+        sheep=[]
+        goats=[]
+        print("day")
+
+        print(str(self.model.schedule.time))
+
         x, y = self.pos
 
-        """radius = 10 km because
-           komodo dragons can smell carcasses 10km away
-           brown bears may be at 20km but email here for sources: heiko jansen bear smell
-           the other thing is that giant rotting sauropods must have smelled awful
-
-           """
-
-        this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
-        this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
-        sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
-
-        goats = [obj for obj in this_cell_close if isinstance(obj, Goat)]
-
-        if len(goats) > 0:
-            goat_to_eat = self.random.choice(goats)
-
-            nbr = random.random()
-
-            if goat_to_eat.energy<4000:
-                print("goat_to_eat")
-
-                print(goat_to_eat.energy)
-                print(goat_to_eat)
-
-                if nbr < .35:
-
-                    self.energy += self.model.wolf_gain_from_food
-                    killer="true"
-
-            # Kill the sheep if odds favor it and if goat is small enough:
-
-                    self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
-                    self.model.schedule.remove(goat_to_eat)
-                    nw_nrg = self.energy
-
-                elif nbr >= .36 and nbr <= .50:
-
-                    self.model.grid._remove_agent(self.pos, self)
-                    self.model.schedule.remove(self)
-        elif len(sheep) > 0:
-
-
-
-            """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
-                self.model.grid.get_neighbors is better
-            2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
-            and I need to make them stay at a carcass once they find  it,"""
-
-            nw_nrg = self.energy
-
-            """this captures the list of all sheep objects within 10 step radius of the wolf
-                    wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
-
-            cls_shp = []
-
-            for ps in sheep:
-                """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
-                cls_shp.append(ps.pos)
-
-            tree = spatial.KDTree(cls_shp)
-
-            arr = tree.query([self.pos])
-
-            clsst_shp = arr[1][0]
-
-            sheep_to_eat = sheep[clsst_shp]
-
-            to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
-
-            self.non_random_move(to_trgt)
-
-            start_e = sheep_to_eat.energy
-
-            """this selects the random sheep to be consumed """
-            self.energy += self.model.wolf_gain_from_food
-            sheep_to_eat.energy -= self.model.wolf_gain_from_food
-            nw_nrg = self.energy
-
-        else:
-            self.random_move()
-
-            rprd = "false"
-
-            """ if the reptile allosaur's body mass drops by 30%, it dies.
-                just as in monitor lizards"""
         if self.energy < 2:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
 
+        if self.age>12:
+            self.model.grid._remove_agent(self.pos, self)
+            self.model.schedule.remove(self)
+            print("died of old age")
+
+            """radius = 10 km because
+               komodo dragons can smell carcasses 10km away
+               brown bears may be at 20km but email here for sources: heiko jansen bear smell
+               the other thing is that giant rotting sauropods must have smelled awful
+
+               """
         else:
-            if random.random() < cfg.allsr_reprd_rte():
+            this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
+            this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
+
+            sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
+
+            goats = [obj for obj in this_cell_close if isinstance(obj, Goat)]
+
+            if len(goats) > 0:
+                goat_to_eat = self.random.choice(goats)
+
+                nbr = random.random()
+
+                if goat_to_eat.energy<4000:
+                    print("goat_to_eat")
+
+                    print(goat_to_eat.energy)
+                    print(goat_to_eat)
+
+                    if nbr < .25:
+
+                        self.energy += self.model.wolf_gain_from_food
+                        killer="true"
+
+                # Kill the sheep if odds favor it and if goat is small enough:
+                        print("I killed a goat")
+                        print(goat_to_eat)
+
+                        self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
+                        print(self)
+                        self.model.schedule.remove(goat_to_eat)
+                        nw_nrg = self.energy
+
+                    elif nbr >= .36 and nbr <= .8:
+                        print("i died")
+
+                        self.model.grid._remove_agent(self.pos, self)
+                        print(self)
+                        self.model.schedule.remove(self)
+
+            elif len(sheep) > 0:
+
+
+
+                """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
+                    self.model.grid.get_neighbors is better
+                2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
+                and I need to make them stay at a carcass once they find  it,"""
+
+                nw_nrg = self.energy
+
+                """this captures the list of all sheep objects within 10 step radius of the wolf
+                        wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
+
+                cls_shp = []
+
+                for ps in sheep:
+                    """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
+                    cls_shp.append(ps.pos)
+
+                tree = spatial.KDTree(cls_shp)
+
+                arr = tree.query([self.pos])
+
+                clsst_shp = arr[1][0]
+
+                sheep_to_eat = sheep[clsst_shp]
+
+                to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
+
+                self.non_random_move(to_trgt)
+
+                start_e = sheep_to_eat.energy
+
+                """this selects the random sheep to be consumed """
+                self.energy += self.model.wolf_gain_from_food
+                sheep_to_eat.energy -= self.model.wolf_gain_from_food
+                nw_nrg = self.energy
+
+            elif random.random() < cfg.allsr_reprd_rte():
+                self.random_move()
+
+                rprd = "false"
+
+                """ if the reptile allosaur's body mass drops by 30%, it dies.
+                    just as in monitor lizards"""
+
+
+            else:
+
 
                 """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-                self.energy *= 0.45
+                self.energy /= 2
 
                 """new wolves start with 1+x energy"""
 
@@ -571,6 +596,7 @@ class Coyote(RandomWalker):
             ,"age"               :[str(self.age)]
             ,"killed_something"  :[str(killer)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
+        print(dkt)
 
         dfx = pd.DataFrame(dkt)
         dfx.to_csv("coyote_data_sheet.csv",mode="a",header=False)
@@ -600,7 +626,21 @@ class Goat(RandomWalker):
         """
         A model step. Move, then eat grass and reproduce.
         """
+        def animal_per_day(n,dys):
+
+            return n/dys
+
+        rprd="false"
+
+        data = pd.read_csv("goat_data_sheet.csv")
+
+        da = data[data["unique_id"]==self.unique_id]
+
+        self.age = len(da.index)
+
         self.random_move()
+
+        print(self.model.schedule.time)
 
 
         nrg = self.energy
@@ -608,26 +648,35 @@ class Goat(RandomWalker):
         self.energy -= 500
 
         nw_nrg = self.energy
+        days = self.model.schedule.time
+        nt = data["unique_id"].nunique()
 
         if self.energy < 200:
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
 
-        if self.random.random() < cfg.goat_reprd_rte():
-            rprd="true"
-            self.energy /= 2
+        if days > 0:
 
-            nx = random.randrange(cfg.dimensions())
-            ny = random.randrange(cfg.dimensions())
+            print(animal_per_day(nt,days))
 
-            self.npos = (nx,ny)
-            lmb = Goat(self.model.next_id(), self.npos, self.model, self.moore, 1)
-            self.model.grid.place_agent(lmb, self.npos)
-            self.model.schedule.add(lmb)
+            # if random.random() < .02:
+            if animal_per_day(nt,days) < cfg.goat_reprd_rte():
+
+                print(animal_per_day(nt,days))
+                rprd="true"
+                self.energy /= 2
+
+                nx = random.randrange(cfg.dimensions())
+                ny = random.randrange(cfg.dimensions())
+
+                self.npos = (nx,ny)
+                lmb = Goat(self.model.next_id(), self.npos, self.model, self.moore, 1)
+                self.model.grid.place_agent(lmb, self.npos)
+                self.model.schedule.add(lmb)
 
 
-        else:
-            rprd="false"
+            else:
+                rprd="false"
 
         dst= {"unique_id"         :[str(self.unique_id)]
             , "initial_energy"    :[str(nrg)]

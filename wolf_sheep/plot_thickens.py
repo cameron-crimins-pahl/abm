@@ -62,64 +62,40 @@ def sauropod_neighbors():
 
 def sauropod_data():
     df = pd.read_csv("sheep_data_sheet.csv")
-    "unique sauropod carcasses"
-    # print("ttl sauropods")
 
 
 
-    ttl_saurp = df["unique_id"].nunique()
-    # print(ttl_saurp)
-
-    # print(df.head())
-
-    # df = df[["step_no","unique_id"]]
-
-    # tfr = df[df["step_no"]==24]
-    # print(tfr.groupby(["initial_energy"]).mean())
-    #
-    # print(len(tfr.index))
-    #
-    # tfv = df[df["step_no"]==25]
-    # print(tfv.groupby(["initial_energy"]).mean())
-    #
-    # print(len(tfv.index))
-    #
-    # ts = df[df["step_no"]==26]
-    # print(ts.groupby(["initial_energy"]).mean())
-    #
-    # print(len(ts.index))
+    # ttl_saurp = df["unique_id"].nunique()
     #
     df = df.groupby(["step_no"]).count()
     #
     df = df.reset_index()
 
-    df["animal"]="sauropod carcasses"
+    df["animal"]="carcasses"
 
     df =df[["step_no","unique_id","animal"]]
 
-    df.columns = ["step_no","count","animal"]
-    # print(df)
+    df.columns = ["step_no","carcasses","animal"]
+    print(df)
 
 
     return df
 
 def cmrsrs_data():
     df = pd.read_csv("goat_data_sheet.csv")
-    "unique sauropod carcasses"
-    # print("ttl cmrsrs")
+    print(df)
 
-    ttl_saurp = df["unique_id"].nunique()
-
+    print(len(df["step_no"].tolist()))
 
     df = df.groupby(["step_no"]).count()
     #
     df = df.reset_index()
 
-    df["animal"]="living sauropods"
+    df["animal"]="living-sauropods"
 
     df =df[["step_no","unique_id","animal"]]
-    df.columns = ["step_no","count","animal"]
-    # print(df)
+    df.columns = ["step_no","living-sauropods","animal"]
+    print(df)
     return df
 
 def srphgnx_data():
@@ -137,7 +113,7 @@ def srphgnx_data():
     df["animal"]="allosaur-predators"
 
     df =df[["step_no","unique_id","animal"]]
-    df.columns = ["step_no","count","animal"]
+    df.columns = ["step_no","allosaur-predators","animal"]
     # print(df)
     return df
 
@@ -210,12 +186,17 @@ def plot_allsr_vs_carcass(f_pth):
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
 
     df_saurp = sauropod_data()
+    print(df_saurp)
+
     df_cmr = cmrsrs_data()
+    print(df_cmr)
+
     df_srph = srphgnx_data()
+    print(df_srph)
 
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
-    df["animal"]="allosaur"
+    df["animal"]="allosaur-scavengers"
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
 
@@ -228,9 +209,9 @@ def plot_allsr_vs_carcass(f_pth):
     # df["srp"] = df["step_no"].map(sauropod_map())
     # df.columns = ["step_no","allsr","srp"]
 
-    df = df.append(df_saurp,ignore_index=True)
-    df = df.append(df_cmr,ignore_index=True)
-    df = df.append(df_srph,ignore_index=True)
+    # df = df.append(df_saurp,ignore_index=True)
+    # df = df.append(df_cmr,ignore_index=True)
+    # df = df.append(df_srph,ignore_index=True)
 
     # df = df.pivot(index='x', columns='color', values='y')
     df = df.pivot(index='step_no', columns='animal', values='count')
@@ -238,6 +219,9 @@ def plot_allsr_vs_carcass(f_pth):
 
     df.plot(kind="line",ax=ax)
     neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax)
+    df_srph.plot(kind="line",y="allosaur-predators",ax=ax)
+    df_cmr.plot(kind="line",y="living-sauropods",ax=ax)
+    df_saurp.plot(kind="line",y="carcasses",ax=ax)
 
     ax.set_xlabel("Day")
     ax.set_ylabel("Population")
@@ -257,4 +241,7 @@ if __name__=="__main__":
 
     # freq_check()
 
-    plot_allsr_vs_carcass()
+    cmrsrs_data()
+    sauropod_data()
+
+    # plot_allsr_vs_carcass()

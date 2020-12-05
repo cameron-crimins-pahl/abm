@@ -12,21 +12,23 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
+# from multiprocessing import Pool
 
 
-# from agents import Sheep, Wolf, GrassPatch, Goat, Coyote
-# from schedule import RandomActivationByBreed
-# import agents
 
-# import cfg
-# import plot_thickens as pt
+from agents import Sheep, Wolf, GrassPatch, Goat, Coyote
+from schedule import RandomActivationByBreed
+import agents
+
+import cfg
+import plot_thickens as pt
 #
 # # #
-from wolf_sheep.agents import Sheep, Wolf, GrassPatch, Goat, Coyote
-from wolf_sheep.schedule import RandomActivationByBreed
-import wolf_sheep.cfg as cfg
-import wolf_sheep.agents as agents
-import wolf_sheep.plot_thickens as pt
+# from wolf_sheep.agents import Sheep, Wolf, GrassPatch, Goat, Coyote
+# from wolf_sheep.schedule import RandomActivationByBreed
+# import wolf_sheep.cfg as cfg
+# import wolf_sheep.agents as agents
+# import wolf_sheep.plot_thickens as pt
 
 
 class WolfSheep(Model):
@@ -132,6 +134,12 @@ class WolfSheep(Model):
                 "Goats"  :lambda m: m.schedule.get_breed_count(Goat),
             }
         )
+        # def mk_anml():
+        #
+        # p=Pool(8)
+        # p.map(self.step_breed, [i for i in range(self.initial_sheep)])
+        # self.steps += 1
+        # self.time += 1
 
         # Create sheep:
         for i in range(self.initial_sheep):
@@ -242,8 +250,8 @@ if __name__=="__main__":
     #                 "sheep_gain_from_food":[4]}
     #
     md = WolfSheep()
-    #
-    for itms in range(150):
+    # #
+    for itms in range(10):
         md.step()
 
     cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.fmr_cost(), cfg.initial_carcs(), cfg.initial_allsrs()
