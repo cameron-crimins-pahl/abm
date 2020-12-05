@@ -1,17 +1,25 @@
 from collections import defaultdict
 
 from mesa.time import RandomActivation
-from multiprocessing import Pool, Process, Manager, Queue
+from pathos.multiprocessing import ProcessingPool as Pool
 from functools import partial
 from itertools import repeat
 
 import pandas as pd
 
+p = Pool()
+#
+# class Ex(object):
+#     def f(self,ob):
+#         print(ob)
+#         print("stepped-function")
+#         return ob.step()
 
 def f(ob):
     print(ob)
     print("stepped-function")
     return ob.step()
+# e = Ex()
 
 class RandomActivationByBreed(RandomActivation):
     """
@@ -153,8 +161,6 @@ class RandomActivationByBreed(RandomActivation):
 
         print("breed list")
         print(breed)
-
-        p = Pool()
 
         """"""
         p.map(f,breed)

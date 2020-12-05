@@ -10,10 +10,11 @@ from matplotlib.animation import FuncAnimation
 
 from mpl_toolkits import mplot3d
 import random
+from pathos.multiprocessing import ProcessingPool as Pool
 
-# import matplotlib.animation as animation
 import time
 
+p=Pool(4)
 
 """from sauropod sheet
    get nunique unique_ids for total number of carcasses,
@@ -31,6 +32,13 @@ import time
    there is no effing way 2ft long juvenile allosauyrs hunted anything
    NOTE I ALSO NEED TO DO A SINGLE CARCASS VS A SINGLE POPULATION OF ALLOSAURS TO SEE HOW THE CARCASS RESPONDS TO MULTIPLE ANIMALS W/ and W/OUT COMPETITION
    THIS SHOULD BE A 10x10 PLOT WITH A SINGLE CARCASS"""
+
+
+
+def f(x):
+    print(x)
+    print("stepped-function")
+    return x+x
 
 
 def plot_sauropods():
@@ -238,10 +246,4 @@ def pop_check():
 
 
 if __name__=="__main__":
-
-    # freq_check()
-
-    cmrsrs_data()
-    sauropod_data()
-
-    # plot_allsr_vs_carcass()
+    p.map(f,[5,4,9])
