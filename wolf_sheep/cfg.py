@@ -12,7 +12,7 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 42
+    fd = 30
     return fd
 
 def radyis():
@@ -21,7 +21,7 @@ def radyis():
     return r
 
 def fmr_cost():
-    c = 28.57
+    c = 9.04
     return c
 
 def initial_carcs():
@@ -50,7 +50,7 @@ def allsr_reprd_rte():
 
 def goat_reprd_rte():
     # m = 1.9
-    m = random.uniform(18,25)
+    m = random.uniform(21,25)
     return m
 
 def saurp_crcs_apprnce_rate():
@@ -58,6 +58,10 @@ def saurp_crcs_apprnce_rate():
     """.85 per day"""
     # r = .99
     r = random.uniform(.75,.9)
+    return r
+
+def age_limit():
+    r = random.uniform(15,25)
     return r
 
 def goat_size_at_birth():

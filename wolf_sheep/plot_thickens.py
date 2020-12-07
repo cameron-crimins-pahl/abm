@@ -10,11 +10,15 @@ from matplotlib.animation import FuncAnimation
 
 from mpl_toolkits import mplot3d
 import random
-from pathos.multiprocessing import ProcessingPool as Pool
 
-import time
 
-p=Pool(4)
+def run_dill_encoded(payload):
+    fun, args = dill.loads(payload)
+    return fun(*args)
+
+def apply_async(pool, fun, args):
+    payload = dill.dumps((fun, args))
+    return pool.apply_async(run_dill_encoded, (payload,))
 
 """from sauropod sheet
    get nunique unique_ids for total number of carcasses,
@@ -35,10 +39,6 @@ p=Pool(4)
 
 
 
-def f(x):
-    print(x)
-    print("stepped-function")
-    return x+x
 
 
 def plot_sauropods():
@@ -190,23 +190,36 @@ def day_steps():
 
 def plot_allsr_vs_carcass(f_pth):
     df = pd.read_csv("wolf_data_sheet.csv")
+
+    print(df)
+    print("SEE HERE")
+
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+
+
+    df["animal"]="allosaur-scavengers"
+    df =df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","allosaur-scavengers","animal"]
+    print(df)
     # print(df[df["step_no"]==1])
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
 
     df_saurp = sauropod_data()
+    print("carcasses")
     print(df_saurp)
 
     df_cmr = cmrsrs_data()
+    print("living-sauropods")
     print(df_cmr)
 
     df_srph = srphgnx_data()
+    print("allosaur-predators")
     print(df_srph)
 
-    df = df.groupby(["step_no"]).count()
-    df = df.reset_index()
-    df["animal"]="allosaur-scavengers"
-    df =df[["step_no","unique_id","animal"]]
-    df.columns = ["step_no","count","animal"]
+
+
+
 
     neighbs = sauropod_neighbors()
 
@@ -222,10 +235,10 @@ def plot_allsr_vs_carcass(f_pth):
     # df = df.append(df_srph,ignore_index=True)
 
     # df = df.pivot(index='x', columns='color', values='y')
-    df = df.pivot(index='step_no', columns='animal', values='count')
+    # df = df.pivot(index='step_no', columns='animal', values='count')
     fig, ax = plt.subplots()
 
-    df.plot(kind="line",ax=ax)
+    df.plot(kind="line",y="allosaur-scavengers",ax=ax)
     neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax)
     df_srph.plot(kind="line",y="allosaur-predators",ax=ax)
     df_cmr.plot(kind="line",y="living-sauropods",ax=ax)
@@ -246,4 +259,28 @@ def pop_check():
 
 
 if __name__=="__main__":
-    p.map(f,[5,4,9])
+
+   # asyn execution of lambda
+
+   df = pd.DataFrame('x', columns=['A', 'B', 'C'], index=range(5))
+   df["D"] = "tester"
+
+   k= []
+
+   for im in df.columns:
+       n = df[im].tolist()
+       k.append(n)
+   print(k)
+
+
+
+
+
+    # jobs = []
+    # for object in obj.list:
+    #     job = apply_async(pool, lambda a, b: (a, b, a * b), (i, i + 1))
+    #     job = apply_async(pool,f, object)
+    #     jobs.append(job)
+    #
+    # for job in jobs:
+    #     print(job.get())

@@ -1,25 +1,27 @@
 from collections import defaultdict
 
 from mesa.time import RandomActivation
-from pathos.multiprocessing import ProcessingPool as Pool
+from multiprocessing import Pool
+import time
 from functools import partial
 from itertools import repeat
+import concurrent.futures
+import threading
 
 import pandas as pd
+import os
 
-p = Pool()
-#
-# class Ex(object):
-#     def f(self,ob):
-#         print(ob)
-#         print("stepped-function")
-#         return ob.step()
+
+
 
 def f(ob):
-    print(ob)
-    print("stepped-function")
-    return ob.step()
-# e = Ex()
+    try:
+        print(ob)
+        print("stepped-function")
+        ob.step()
+    except Exception as e:
+        print("error")
+        print(e)
 
 class RandomActivationByBreed(RandomActivation):
     """
@@ -74,27 +76,39 @@ class RandomActivationByBreed(RandomActivation):
             # print(ded)
             # print(ded.columns)
 
-            da = ded.iloc[:,0]
-            da = da[da.notna()]
-            da = da.tolist()
+            objcts =[]
 
-            db = ded.iloc[:,1]
-            db = db[db.notna()]
-            db = db.tolist()
+            for im in list(range(len(ded.columns))):
+                # print("im")
+                # print(im)
+                da = ded.iloc[:,im]
+                da = da[da.notna()]
+                da = da.tolist()
+                objcts.append(da)
 
+            # objcts = [da,db,dc,dd]
 
-            dc = ded.iloc[:,2]
-            dc = dc[dc.notna()]
-            dc = dc.tolist()
-
-            dd = ded.iloc[:,3]
-            dd = dd[dd.notna()]
-            dd = dd.tolist()
+            # da = ded.iloc[:,0]
+            # da = da[da.notna()]
+            # da = da.tolist()
+            #
+            # db = ded.iloc[:,1]
+            # db = db[db.notna()]
+            # db = db.tolist()
+            #
+            #
+            # dc = ded.iloc[:,2]
+            # dc = dc[dc.notna()]
+            # dc = dc.tolist()
+            #
+            # dd = ded.iloc[:,3]
+            # dd = dd[dd.notna()]
+            # dd = dd.tolist()
 
             # print("da")
 
             # print(da)
-            objcts = [da,db,dc,dd]
+
             # dl = ded["A"].tolist()
             #
             #  p = Pool()
@@ -113,23 +127,9 @@ class RandomActivationByBreed(RandomActivation):
             # agent_keys = list(self.agents_by_breed[breed].keys())
 
             for itms in objcts:
-                print(itms)
-
+                # print(itms)
                 self.step_breed(itms)
 
-
-            # print(self.agents_by_breed.keys())
-            # for agent_class in self.agents_by_breed:
-            #     """agent class is breed"""
-            #     print("agent class step keys")
-            #     agent_keys = list(self.agents_by_breed[agent_class].keys())
-            #     print(agent_keys)
-            #     for agent_key in agent_keys:
-            #     # print(self.agents_by_breed)
-            #         print(self.agents_by_breed[agent_class][agent_key])
-            #         print(agent_class)
-            #         self.step_breed(self.agents_by_breed[agent_class][agent_key])
-                # self.step_breed(agent_class)
 
             self.steps += 1
             self.time  += 1
@@ -159,11 +159,27 @@ class RandomActivationByBreed(RandomActivation):
 
         # f(ded["A"].iloc[0])
 
-        print("breed list")
-        print(breed)
+        # print("breed list")
+
+        output1 = list()
+        # print(breed)
+        with concurrent.futures.ThreadPoolExecutor(max_workers= os.cpu_count() - 2) as executor:
+            for out1 in executor.map(f, breed):
+                output1.append(out1)
+
+            # confirm output
+                # print(output1)
+                print("Task Executed {}".format(threading.current_thread()))
+
+        # executor = ThreadPoolExecutor(10)
+        # futures = [executor.submit(f, item) for item in breed]
+        # concurrent.futures.wait(futures)
+
+
+
 
         """"""
-        p.map(f,breed)
+
         # p.apply_async(f,args=(dl,))
         # print("stepped")
 

@@ -12,18 +12,14 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.batchrunner import BatchRunner
-# from multiprocessing import Pool
-
-
 
 from agents import Sheep, Wolf, GrassPatch, Goat, Coyote
 from schedule import RandomActivationByBreed
-import agents
-
 import cfg
+import agents
 import plot_thickens as pt
 #
-# # #
+# # #######
 # from wolf_sheep.agents import Sheep, Wolf, GrassPatch, Goat, Coyote
 # from wolf_sheep.schedule import RandomActivationByBreed
 # import wolf_sheep.cfg as cfg
@@ -232,27 +228,9 @@ class WolfSheep(Model):
 if __name__=="__main__":
 
     # md = WolfSheep()
-    #
-    # md.step()
 
-
-    # agents.function_test()
-
-    # parameters=    {"height":[100],
-    #                 "width":[100],
-    #                 "initial_sheep":[3],
-    #                 "initial_wolves":[10],
-    #                 "sheep_reproduce":[0.04],
-    #                 "wolf_reproduce":[0.05],
-    #                 "wolf_gain_from_food":[20],
-    #                 "grass":"False",
-    #                 "grass_regrowth_time":[30],
-    #                 "sheep_gain_from_food":[4]}
-    #
-    md = WolfSheep()
-    # #
-    for itms in range(2):
-        md.step()
+    # for itms in range(365):
+    #     md.step()
 
     cfg.summary(cfg.dimensions(), cfg.wolf_gn(), cfg.radyis(), cfg.fmr_cost(), cfg.initial_carcs(), cfg.initial_allsrs()
                 , cfg.saurp_mass(), cfg.saurp_crcs_apprnce_rate(), pt.total_allosaurs(), pt.total_carcasses()
