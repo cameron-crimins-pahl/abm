@@ -347,8 +347,10 @@ class Wolf(RandomWalker):
             self.model.grid.place_agent(cub, npos)
             self.model.schedule.add(cub)
             rprd = "true"
-            # print(cub.energy)
-            # print("reprd = " + rprd)
+            print("cub stats")
+            print(cub.unique_id)
+            print(cub.energy)
+            print("reprd = " + rprd)
 
         if len(sheep) > 0:
             # print("\nSHEEP")
@@ -402,14 +404,21 @@ class Wolf(RandomWalker):
             """make a dataframe to record the actions of each agent, if they ate, etc.  """
 
             print("sheep from wolf perspective has  " +str(start_e)+ " energy")
-            """this selects the random sheep to be consumed """
+            # """this selects the random sheep to be consumed """
+            print("sheep to eat and etc")
+            print(sheep_to_eat)
+            print(clsshp)
+            # if sheep_to_eat in clsshp:
+            print("SHEEP IS IN CLS SHP")
             if sheep_to_eat in clsshp:
-                # print("SHEEP IS IN CLS SHP")
-                # print(self.energy)
-                self.energy += self.model.wolf_gain_from_food
+                print("this ", sheep_to_eat, clsshp)
+                print(self.energy)
+                print("gains ",self.model.wolf_gain_from_food)
+                self.energy = self.energy+ self.model.wolf_gain_from_food
+                print(self.energy)
                 sheep_to_eat.energy -= self.model.wolf_gain_from_food
                 nw_nrg = self.energy
-                # print(nw_nrg)
+                print(nw_nrg)
 
         else:
             self.random_move()
@@ -547,7 +556,7 @@ class Coyote(RandomWalker):
 
                     if nbr < .25:
 
-                        self.energy += self.model.wolf_gain_from_food
+                        self.energy = self.energy + self.model.wolf_gain_from_food
                         killer="true"
 
                         nw_nrg=self.energy
@@ -606,8 +615,8 @@ class Coyote(RandomWalker):
                 print(self.pos)
                 print(sheep_to_eat.pos)
                 if self.pos == sheep_to_eat.pos:
-                    self.energy += self.model.wolf_gain_from_food
-                    sheep_to_eat.energy -= self.model.wolf_gain_from_food
+                    self.energy = self.energy + self.model.wolf_gain_from_food
+                    sheep_to_eat.energy = sheep_to_eat.energy + self.model.wolf_gain_from_food
                     nw_nrg = self.energy
 
 

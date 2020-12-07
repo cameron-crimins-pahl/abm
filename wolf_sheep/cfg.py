@@ -12,7 +12,7 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 30
+    fd = 34
     return fd
 
 def radyis():
@@ -21,7 +21,7 @@ def radyis():
     return r
 
 def fmr_cost():
-    c = 9.04
+    c = 17.04
     return c
 
 def initial_carcs():
@@ -29,11 +29,11 @@ def initial_carcs():
     return 3
 
 def initial_allsrs():
-    a = 30
+    a = 34
     return a
 
 def initial_srphs():
-    a = 30
+    a = 34
     return a
 
 def initial_cmrser():
@@ -45,12 +45,12 @@ def saurp_mass():
     return m
 
 def allsr_reprd_rte():
-    m = .02
+    m = .04
     return m
 
 def goat_reprd_rte():
     # m = 1.9
-    m = random.uniform(21,25)
+    m = random.uniform(15,18)
     return m
 
 def saurp_crcs_apprnce_rate():
