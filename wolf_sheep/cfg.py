@@ -12,7 +12,7 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 34
+    fd = 43
     return fd
 
 def radyis():
@@ -33,7 +33,7 @@ def initial_allsrs():
     return a
 
 def initial_srphs():
-    a = 34
+    a = 42
     return a
 
 def initial_cmrser():

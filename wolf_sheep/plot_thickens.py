@@ -241,7 +241,7 @@ def plot_allsr_vs_carcass(f_pth):
     df.plot(kind="line",y="allosaur-scavengers",ax=ax)
     neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax)
     df_srph.plot(kind="line",y="allosaur-predators",ax=ax)
-    df_cmr.plot(kind="line",y="living-sauropods",ax=ax)
+    # df_cmr.plot(kind="line",y="living-sauropods",ax=ax)
     df_saurp.plot(kind="line",y="carcasses",ax=ax)
 
     ax.set_xlabel("Day")

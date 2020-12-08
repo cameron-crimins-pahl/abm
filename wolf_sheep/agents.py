@@ -275,10 +275,10 @@ class Wolf(RandomWalker):
             return pth[1]
 
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
-        # print(self.energy)
+        print(self.energy)
         nrg = self.energy
         self.energy -= cfg.fmr_cost()
-        # print(self.energy)
+        print(self.energy)
         rprd="false"
 
         """ it costs self.energy to move"""
@@ -334,7 +334,7 @@ class Wolf(RandomWalker):
 
 
             """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
-            self.energy *= 0.45
+            # self.energy *= 0.45
 
             """new wolves start with 1+x energy"""
 
@@ -347,10 +347,10 @@ class Wolf(RandomWalker):
             self.model.grid.place_agent(cub, npos)
             self.model.schedule.add(cub)
             rprd = "true"
-            print("cub stats")
-            print(cub.unique_id)
-            print(cub.energy)
-            print("reprd = " + rprd)
+            # print("cub stats")
+            # print(cub.unique_id)
+            # print(cub.energy)
+            # print("reprd = " + rprd)
 
         if len(sheep) > 0:
             # print("\nSHEEP")
@@ -416,7 +416,7 @@ class Wolf(RandomWalker):
                 print("gains ",self.model.wolf_gain_from_food)
                 self.energy = self.energy+ self.model.wolf_gain_from_food
                 print(self.energy)
-                sheep_to_eat.energy -= self.model.wolf_gain_from_food
+                sheep_to_eat.energy = sheep_to_eat.energy - self.model.wolf_gain_from_food
                 nw_nrg = self.energy
                 print(nw_nrg)
 
@@ -438,7 +438,7 @@ class Wolf(RandomWalker):
 
 
 
-        nw_nrg = self.energy
+        # nw_nrg = self.energy
 
         dkt= {"adjacent_sheep"  :[str(len(sheep))]
             , "unique_id"       :[str(self.unique_id)]
@@ -449,7 +449,7 @@ class Wolf(RandomWalker):
             ,"age"               :[str(self.age)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
 
-        # print(dkt)
+        print(dkt)
         dfx = pd.DataFrame(dkt)
         dfx.to_csv("wolf_data_sheet.csv",mode="a",header=False)
 
@@ -509,7 +509,7 @@ class Coyote(RandomWalker):
         if self.age > cfg.age_limit():
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
-            print("died of old age")
+            # print("died of old age")
 
         if random.random() < cfg.allsr_reprd_rte():
             self.energy /= 2
@@ -549,7 +549,7 @@ class Coyote(RandomWalker):
                 nbr = random.random()
 
                 if goat_to_eat.energy<2000:
-                    print("goat_to_eat")
+                    # print("goat_to_eat")
 
                     print(goat_to_eat.energy)
                     print(goat_to_eat)
@@ -562,19 +562,19 @@ class Coyote(RandomWalker):
                         nw_nrg=self.energy
 
                 # Kill the sheep if odds favor it and if goat is small enough:
-                        print("I killed a goat")
-                        print(goat_to_eat)
+                        # print("I killed a goat")
+                        # print(goat_to_eat)
 
                         self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
-                        print(self)
+                        # print(self)
                         self.model.schedule.remove(goat_to_eat)
                         nw_nrg = self.energy
 
                     elif nbr >= .36 and nbr <= .8:
-                        print("i died")
+                        # print("i died")
 
                         self.model.grid._remove_agent(self.pos, self)
-                        print(self)
+                        # print(self)
                         self.model.schedule.remove(self)
 
             elif len(sheep) > 0:
@@ -612,8 +612,8 @@ class Coyote(RandomWalker):
                 start_e = sheep_to_eat.energy
 
                 """this selects the random sheep to be consumed """
-                print(self.pos)
-                print(sheep_to_eat.pos)
+                # print(self.pos)
+                # print(sheep_to_eat.pos)
                 if self.pos == sheep_to_eat.pos:
                     self.energy = self.energy + self.model.wolf_gain_from_food
                     sheep_to_eat.energy = sheep_to_eat.energy + self.model.wolf_gain_from_food
@@ -639,7 +639,7 @@ class Coyote(RandomWalker):
             ,"age"               :[str(self.age)]
             ,"killed_something"  :[str(killer)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
-        print(dkt)
+        # print(dkt)
 
         dfx = pd.DataFrame(dkt)
         dfx.to_csv("coyote_data_sheet.csv",mode="a",header=False)
@@ -700,13 +700,13 @@ class Goat(RandomWalker):
 
         if days > 0:
 
-            print(animal_per_day(nt,days))
+            # print(animal_per_day(nt,days))
 
 
             # if random.random() < .02:
             if animal_per_day(nt,days) < cfg.goat_reprd_rte():
 
-                print(animal_per_day(nt,days))
+                # print(animal_per_day(nt,days))
                 rprd="true"
                 self.energy /= 2
 
