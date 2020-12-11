@@ -238,11 +238,14 @@ def plot_allsr_vs_carcass(f_pth):
     # df = df.pivot(index='step_no', columns='animal', values='count')
     fig, ax = plt.subplots()
 
-    df.plot(kind="line",y="allosaur-scavengers",ax=ax)
-    neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax)
-    df_srph.plot(kind="line",y="allosaur-predators",ax=ax)
-    # df_cmr.plot(kind="line",y="living-sauropods",ax=ax)
-    df_saurp.plot(kind="line",y="carcasses",ax=ax)
+    colrs = { "allosaur-scavengers" : "#e6178e"
+             ,"allosaur-predators" : ""}
+
+    df.plot(kind="line",y="allosaur-scavengers",ax=ax,color="#1f6f8b")#00adb5
+    neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="#00adb5")
+    df_srph.plot(kind="line",y="allosaur-predators",ax=ax,color="#ff2e63")
+    df_cmr.plot(kind="line",y="living-sauropods",ax=ax, color="#0f4c75")
+    df_saurp.plot(kind="line",y="carcasses",ax=ax,color="#0f3057")
 
     ax.set_xlabel("Day")
     ax.set_ylabel("Population")

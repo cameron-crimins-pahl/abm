@@ -109,7 +109,7 @@ class RandomActivationByBreed(RandomActivation):
 
         output1 = list()
         # print(breed)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=14) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
             for out1 in executor.map(f, breed):
                 output1.append(out1)
 

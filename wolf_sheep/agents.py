@@ -95,7 +95,7 @@ class Sheep(RandomWalker):
            from a single carcassj
            and i can't forget to measure how many steps they take avg to find a carcass
            and I need to make them stay at a carcass once they find  it,"""
-        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=2)
+        this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
 
         wlvs = [obj for obj in this_cell if isinstance(obj, Wolf)]
 
@@ -141,13 +141,9 @@ class Sheep(RandomWalker):
         it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
         """
         print("day "+str(days))
-        if days > 0:
-            print("days appear")
-
-            print(carcs_per_day(nt,days))
-
-            # if random.random() < .02:
-            if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
+        if days > 60 and days < 120:
+            print("low yield season")
+            if carcs_per_day(nt,days) < (cfg.saurp_crcs_apprnce_rate()*3):
 
                     print("CARCS PER DAY")
                     print(carcs_per_day(nt,days))
@@ -180,6 +176,42 @@ class Sheep(RandomWalker):
                     self.model.schedule.add(lamb)
 
                     print("new lamb position = "+str(npos))
+        else:
+            if days > 1:
+
+                if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
+
+                        print("CARCS PER DAY")
+                        print(carcs_per_day(nt,days))
+
+                        """if the carcass hasn't reproduced yet, make a new carcass
+                           otherwise collect the data and do nothing"""
+
+                        rprd="true"
+
+
+                        """i might need to make this produce like 2 carcasses per day
+                           based on 100k kg average carrion production per day.
+                           if only 5 die every year
+
+                           if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
+                           I'll need to do it this way to demonstrate algebraic supply demand
+                           but
+                           """
+                        # self.nwnrg = random.randrange(20000,45000)
+
+                        n_x = random.randrange(cfg.dimensions())
+                        n_y = random.randrange(cfg.dimensions())
+
+                        npos = (n_x,n_y)
+
+                        lamb = Sheep(self.model.next_id(), npos, self.model, self.moore, 1)
+
+                        self.model.grid.place_agent(lamb, npos)
+
+                        self.model.schedule.add(lamb)
+
+                        print("new lamb position = "+str(npos))
 
         dst= {"consuming_wolves"  :[str(len(wlvs))]
             , "unique_id"         :[str(self.unique_id)]
@@ -318,7 +350,7 @@ class Wolf(RandomWalker):
         een = random.random()
         if een < cfg.allsr_reprd_rte():
 
-            print("line 320, random.random()= "+str(een)+" rprd rate "+str(cfg.allsr_reprd_rte()))
+            # print("line 320, random.random()= "+str(een)+" rprd rate "+str(cfg.allsr_reprd_rte()))
             """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
             or
             reproduce if step is between 275-280 for breeding season
@@ -405,20 +437,20 @@ class Wolf(RandomWalker):
 
             print("sheep from wolf perspective has  " +str(start_e)+ " energy")
             # """this selects the random sheep to be consumed """
-            print("sheep to eat and etc")
-            print(sheep_to_eat)
-            print(clsshp)
+            # print("sheep to eat and etc")
+            # print(sheep_to_eat)
+            # print(clsshp)
             # if sheep_to_eat in clsshp:
             print("SHEEP IS IN CLS SHP")
             if sheep_to_eat in clsshp:
-                print("this ", sheep_to_eat, clsshp)
-                print(self.energy)
-                print("gains ",self.model.wolf_gain_from_food)
+                # print("this ", sheep_to_eat, clsshp)
+                # print(self.energy)
+                # print("gains ",self.model.wolf_gain_from_food)
                 self.energy = self.energy+ self.model.wolf_gain_from_food
-                print(self.energy)
+                # print(self.energy)
                 sheep_to_eat.energy = sheep_to_eat.energy - self.model.wolf_gain_from_food
                 nw_nrg = self.energy
-                print(nw_nrg)
+                # print(nw_nrg)
 
         else:
             self.random_move()
@@ -431,7 +463,7 @@ class Wolf(RandomWalker):
         idddd = str(self.unique_id)
 
         if self.energy < 1:
-            print("wolf dead "+ str(idddd))
+            # print("wolf dead "+ str(idddd))
             self.model.grid._remove_agent(self.pos, self)
             # print(self)
             self.model.schedule.remove(self)
@@ -548,7 +580,7 @@ class Coyote(RandomWalker):
 
                 nbr = random.random()
 
-                if goat_to_eat.energy<2000:
+                if goat_to_eat.energy<3000:
                     # print("goat_to_eat")
 
                     print(goat_to_eat.energy)
@@ -570,7 +602,7 @@ class Coyote(RandomWalker):
                         self.model.schedule.remove(goat_to_eat)
                         nw_nrg = self.energy
 
-                    elif nbr >= .36 and nbr <= .8:
+                    elif nbr >= .3 and nbr <= .4:
                         # print("i died")
 
                         self.model.grid._remove_agent(self.pos, self)

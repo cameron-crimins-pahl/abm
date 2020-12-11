@@ -17,7 +17,7 @@ def wolf_gn():
 
 def radyis():
     """detection radius for consumer"""
-    r = 10
+    r = 9
     return r
 
 def fmr_cost():
@@ -33,7 +33,7 @@ def initial_allsrs():
     return a
 
 def initial_srphs():
-    a = 42
+    a = 34
     return a
 
 def initial_cmrser():
@@ -45,7 +45,7 @@ def saurp_mass():
     return m
 
 def allsr_reprd_rte():
-    m = .04
+    m = .03
     return m
 
 def goat_reprd_rte():
@@ -57,11 +57,11 @@ def saurp_crcs_apprnce_rate():
 
     """.85 per day"""
     # r = .99
-    r = random.uniform(.75,.9)
+    r = random.uniform(.6,.8)
     return r
 
 def age_limit():
-    r = random.uniform(15,25)
+    r = random.uniform(15,18)
     return r
 
 def goat_size_at_birth():
@@ -161,8 +161,8 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs, intl_als
     subprocess.call("mkdir "+new_path, shell=True)
     #"/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png"
     "45000kg_saurp-extinct-FALSE-competition.txt"
-    f       = open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-FALSE-sr-"+str(rdius)+".txt","w")
-    fg      =      new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-FALSE-sr-"+str(rdius)+".png"
+    f       = open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-TRUE-sr-"+str(rdius)+".txt","w")
+    fg      =      new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-TRUE-sr-"+str(rdius)+".png"
     print(fg)
     f.write(txt)
     pt.plot_allsr_vs_carcass(fg)
