@@ -151,6 +151,15 @@ def goat_reprd_true():
 
     print(dft)
 
+def goat_samples():
+    df = pd.read_csv("goat_data_sheet.csv")
+
+    df=df.drop_duplicates(['unique_id'])
+
+    df = df.sample(frac=.05)
+
+    return df["unique_id"].tolist()
+
 def total_carcasses():
     df = pd.read_csv("sheep_data_sheet.csv")
     "unique sauropod carcasses"
@@ -359,7 +368,7 @@ if __name__=="__main__":
    # distribution()
    # pop_check()
    # avg_size()
-   goat_reprd_true()
+   goat_samples()
 
 
 

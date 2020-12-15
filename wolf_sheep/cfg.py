@@ -55,7 +55,7 @@ def goat_reprd_rte():
 
 def saurp_crcs_apprnce_rate():
 
-    """ user df.sample(n=3) to get 3 random rows
+    """ user df.sample(frac=.05) to get 3 random rows
         then kill n sauropods to make a 5% mortality / cycle"""
 
     """.85 per day"""

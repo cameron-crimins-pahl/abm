@@ -579,37 +579,41 @@ class Coyote(RandomWalker):
             goats = [obj for obj in this_cell_close if isinstance(obj, Goat)]
 
             if len(goats) > 0:
+
                 goat_to_eat = self.random.choice(goats)
 
                 nbr = random.random()
 
                 if goat_to_eat.energy<3000:
                     # print("goat_to_eat")
-
                     print(goat_to_eat.energy)
+
                     print(goat_to_eat)
 
                     if nbr < .25:
 
                         self.energy = self.energy + self.model.wolf_gain_from_food
+
                         killer="true"
 
-                        nw_nrg=self.energy
-
-                # Kill the sheep if odds favor it and if goat is small enough:
-                        print("I killed a goat")
                         print(goat_to_eat)
 
                         self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
-                        # print(self)
+
                         self.model.schedule.remove(goat_to_eat)
+
+                        shp = Sheep(self.model.next_id(), self.pos, goat_to_eat.model, goat_to_eat.moore, goat_to_eat.energy)
+
+                        self.model.grid.place_agent(shp, self.pos)
+
+                        self.model.schedule.add(shp)
+
                         nw_nrg = self.energy
 
                     elif nbr >= .3 and nbr <= .4:
-                        # print("i died")
 
                         self.model.grid._remove_agent(self.pos, self)
-                        # print(self)
+
                         self.model.schedule.remove(self)
 
             elif len(sheep) > 0:
@@ -645,8 +649,7 @@ class Coyote(RandomWalker):
                 start_e = sheep_to_eat.energy
 
                 """this selects the random sheep to be consumed """
-                # print(self.pos)
-                # print(sheep_to_eat.pos)
+
                 if self.pos == sheep_to_eat.pos:
                     self.energy = self.energy + self.model.wolf_gain_from_food
                     sheep_to_eat.energy = sheep_to_eat.energy + self.model.wolf_gain_from_food
@@ -685,12 +688,6 @@ class Goat(RandomWalker):
         # self.energy += cfg.saurp_mass()
         self.energy = self.energy + cfg.goat_size_at_birth()
 
-        data = pd.read_csv("goat_data_sheet.csv")
-
-        da = data[data["unique_id"]==self.unique_id]
-
-        self.age = len(da.index)
-
     def step(self):
 
         def animal_per_day(n,dys):
@@ -700,15 +697,15 @@ class Goat(RandomWalker):
 
         data = pd.read_csv("goat_data_sheet.csv")
 
-        da = data[data["unique_id"]==self.unique_id]
+        dn=data.drop_duplicates(['unique_id'])
+        dn = dn.sample(frac=.05)
+        rndms = dn["unique_id"].tolist()
 
-        # init_mss = da.iloc[0]['initial_mass']
+        da = data[data["unique_id"]==self.unique_id]
 
         self.age = len(da.index)
 
         self.random_move()
-
-        print(self.model.schedule.time)
 
         nrg = self.energy
 
@@ -718,7 +715,7 @@ class Goat(RandomWalker):
 
         nt = data["unique_id"].nunique()
 
-        if random.random() < .05:
+        if self.unique_id in rndms:
 
             self.model.grid._remove_agent(self.pos, self)
 
