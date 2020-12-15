@@ -17,8 +17,8 @@ def wolf_sheep_portrayal(agent):
     portrayal = {}
 
     if type(agent) is Sheep:
-        portrayal["Color"] = ["#FFD369"]
-        # portrayal["Shape"] = "square"
+        portrayal["Color"] = ["#e68a17"]
+        # portrayal["Shape"] = "circle"
         # portrayal["Filled"] = "true"
         portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/sheep.png"
         # https://icons8.com/web-app/433/sheep
@@ -27,8 +27,8 @@ def wolf_sheep_portrayal(agent):
         portrayal["Layer"] = 1
 
     elif type(agent) is Goat:
-        # portrayal["Color"] = ["#EC5858"]
-        # portrayal["Shape"] = "square"
+        portrayal["Color"] = ["#0254a1"]
+        # portrayal["Shape"] = "circle"
         portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/goat.png"
         # https://icons8.com/web-app/36821/German-Shepherd
         portrayal["scale"] = 0.9
@@ -37,17 +37,18 @@ def wolf_sheep_portrayal(agent):
         portrayal["text_color"] = "Black"
 
     elif type(agent) is Wolf:
-        # portrayal["Color"] = ["#222831"]
-        # portrayal["Shape"] = "circle"
+        portrayal["Color"] = ["#e6178e"]
+        # portrayal["Shape"] = "square"
         portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/wolf.png"
         # https://icons8.com/web-app/36821/German-Shepherd
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
-        portrayal["text"] = round(agent.energy, 1)
+        portrayal["text"] = agent.unique_id
+        # portrayal["text"] = round(agent.energy, 1)
         portrayal["text_color"] = "Black"
 
     elif type(agent) is Coyote:
-        # portrayal["Color"] = ["#0E918C"]
+        portrayal["Color"] = ["#17e68a"]
         # portrayal["Shape"] = "circle"
         portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/coyote.png"
         # https://icons8.com/web-app/36821/German-Shepherd
@@ -72,10 +73,10 @@ def wolf_sheep_portrayal(agent):
 
 canvas_element = CanvasGrid(wolf_sheep_portrayal, cfg.dimensions(), cfg.dimensions(), 500, 500)
 chart_element = ChartModule(
-    [{"Label": "Wolves" , "Color"  : "#222831"}
-    ,{"Label": "Sheep"  , "Color"  : "#FFD369"}
-    ,{"Label": "Coyotes", "Color"  : "#0E918C"}
-    ,{"Label": "Goats"  , "Color"  : "#EC5858"}]
+    [{"Label": "Wolves" , "Color"  : "#e6178e"}
+    ,{"Label": "Sheep"  , "Color"  : "#e68a17"}
+    ,{"Label": "Coyotes", "Color"  : "#17e68a"}
+    ,{"Label": "Goats"  , "Color"  : "#0254a1"}]
 )
 
 model_params = {

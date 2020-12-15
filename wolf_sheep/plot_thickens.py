@@ -12,14 +12,6 @@ from mpl_toolkits import mplot3d
 import random
 
 
-def run_dill_encoded(payload):
-    fun, args = dill.loads(payload)
-    return fun(*args)
-
-def apply_async(pool, fun, args):
-    payload = dill.dumps((fun, args))
-    return pool.apply_async(run_dill_encoded, (payload,))
-
 """from sauropod sheet
    get nunique unique_ids for total number of carcasses,
    then compute number of sauropods that could make nunique items
@@ -66,6 +58,10 @@ def sauropod_neighbors():
     df = df[["step_no","consuming_wolves"]].groupby(["step_no"]).sum()
     df = df.reset_index()
     df.columns =["step_no","allosaurs_at_carcass"]
+    print("allosaurs at carcasses:")
+    print(df)
+    print(df[df["step_no"]=="91"])
+    print(df[df["step_no"]==91])
     return df
 
 def sauropod_data():
@@ -134,6 +130,27 @@ def total_allosaurs():
     # print(ttl_allsr)
     return ttl_allsr
 
+def total_goats():
+    df = pd.read_csv("goat_data_sheet.csv")
+    # print(df[df["step_no"]==1])
+    # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
+    ttl = df["unique_id"].nunique()
+    # print(ttl_allsr)
+    return ttl
+
+def goat_reprd_true():
+    df = pd.read_csv("goat_data_sheet.csv")
+
+    print(df.head())
+
+    dft = df[df["reproduced"]==True]
+    print(len(df.index))
+    print(len(dft.index))
+
+    print(df["unique_id"].nunique())
+
+    print(dft)
+
 def total_carcasses():
     df = pd.read_csv("sheep_data_sheet.csv")
     "unique sauropod carcasses"
@@ -187,7 +204,26 @@ def day_steps():
     df = df.reset_index()
     return len(df.index)
 
+def avg_size():
+    df = pd.read_csv("sheep_data_sheet.csv")
 
+    print(df["strt_mass"].mean())
+    return df["strt_mass"].mean()
+
+def crc_appearance_rate():
+
+    df = pd.read_csv("sheep_data_sheet.csv")
+
+    print(df)
+    print("SEE HERE")
+
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    print(df)
+
+
+
+# def plot_allsr_vs_carcass():
 def plot_allsr_vs_carcass(f_pth):
     df = pd.read_csv("wolf_data_sheet.csv")
 
@@ -202,7 +238,8 @@ def plot_allsr_vs_carcass(f_pth):
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","allosaur-scavengers","animal"]
     print(df)
-    # print(df[df["step_no"]==1])
+    print(df[df["step_no"]==91])
+    print(df[df["step_no"]==1])
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
 
     df_saurp = sauropod_data()
@@ -238,14 +275,16 @@ def plot_allsr_vs_carcass(f_pth):
     # df = df.pivot(index='step_no', columns='animal', values='count')
     fig, ax = plt.subplots()
 
-    colrs = { "allosaur-scavengers" : "#e6178e"
-             ,"allosaur-predators" : ""}
+    colrs = { "allosaur-scavengers"  : "#e6178e"
+             ,"allosaurs_at_carcass" : "#6a17e6"
+             ,"carcasses"            : "#e68a17"
+             ,"allosaur-predators"   : "#17e68a"}
 
-    df.plot(kind="line",y="allosaur-scavengers",ax=ax,color="#1f6f8b")#00adb5
-    neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="#00adb5")
-    df_srph.plot(kind="line",y="allosaur-predators",ax=ax,color="#ff2e63")
-    df_cmr.plot(kind="line",y="living-sauropods",ax=ax, color="#0f4c75")
-    df_saurp.plot(kind="line",y="carcasses",ax=ax,color="#0f3057")
+    df.plot(kind="line",y="allosaur-scavengers",ax=ax,color="#e6178e")#00adb5
+    neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="#6a17e6")
+    df_srph.plot(kind="line",y="allosaur-predators",ax=ax,color="#17e68a")
+    df_cmr.plot(kind="line",y="living-sauropods",ax=ax, color="#0254a1")
+    df_saurp.plot(kind="line",y="carcasses",ax=ax,color="#e68a17")
 
     ax.set_xlabel("Day")
     ax.set_ylabel("Population")
@@ -253,11 +292,63 @@ def plot_allsr_vs_carcass(f_pth):
     plt.title("allosaur population vs carrion supply over time")
     # plt.show()
     plt.savefig(f_pth)
-    # plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
+    plt.savefig("/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png")
 
 def pop_check():
 
-    return 6/5
+    df=pd.read_csv("sheep_data_sheet.csv")
+    # print(df.sort_values(by=['strt_mass']))
+    df = df.groupby(["step_no"]).count()
+    df = df.reset_index()
+    df["animal"]="carcasses"
+    df = df[["step_no","unique_id","animal"]]
+    df.columns = ["step_no","carcasses","animal"]
+    print(df)
+
+    """drop duplicates keep first uniquq_id to get the real distribution of animal carcass sizes"""
+
+    df2 = pd.read_csv("wolf_data_sheet.csv")
+    df2 = df2.groupby(["step_no"]).count()
+    # print(df2)
+    df2 = df2.reset_index()
+    # # df2 =df2.drop_duplicates(subset=["step_no"],keep="first")
+    #
+    df2["animal"]="carnosaur-scavengers"
+    df2 = df2[["step_no","unique_id","animal"]]
+    df2.columns = ["step_no","carnosaur-scavengers","animal"]
+    #
+    # df2["carnosaur-scavengers"] = df2.index
+    # # df2.columns = ["step_no","carnosaur-scavengers"
+    # print(df2)
+    # print(df2.columns)
+
+    df3 = pd.read_csv("goat_data_sheet.csv")
+    df3 = df3.groupby(["step_no"]).count()
+    df3 = df3.reset_index()
+    df3 = df3[["step_no","unique_id"]]
+    df3.columns = ["step_no","living-sauropods"]
+    print(df3)
+
+    df4 = pd.read_csv("coyote_data_sheet.csv")
+    df4 = df4.groupby(["step_no"]).count()
+    df4 = df4.reset_index()
+    df4 = df4[["step_no","unique_id"]]
+    df4.columns = ["step_no","carnosaur-predators"]
+    # print(df3.head())
+    # # #
+    fig, ax = plt.subplots()
+    df.plot(kind="line",y="carcasses",ax=ax,color="orange")
+    df2.plot(kind="line",y="carnosaur-scavengers",ax=ax,color="blue")
+    df3.plot(kind="line",y="living-sauropods",ax=ax,color="green")
+    df4.plot(kind="line",y="carnosaur-predators",ax=ax,color="green")
+    plt.show()
+    # df = df[df["unique_id"]==1]
+    # print(df.loc[df["unique_id"]==1,"initial_energy"].head(1).item())
+
+
+def distribution():
+
+    print(np.random.uniform(1,45000,10))
 
 
 
@@ -265,15 +356,10 @@ if __name__=="__main__":
 
    # asyn execution of lambda
 
-   df = pd.DataFrame('x', columns=['A', 'B', 'C'], index=range(5))
-   df["D"] = "tester"
-
-   k= []
-
-   for im in df.columns:
-       n = df[im].tolist()
-       k.append(n)
-   print(k)
+   # distribution()
+   # pop_check()
+   # avg_size()
+   goat_reprd_true()
 
 
 

@@ -15,11 +15,11 @@ import os
 
 def f(ob):
     try:
-        print(ob)
-        print("stepped-function")
+        # print(ob)
+        # print("stepped-function",ob)
         ob.step()
     except Exception as e:
-        print("error")
+        print("error",ob)
         print(e)
 
 class RandomActivationByBreed(RandomActivation):
@@ -81,13 +81,13 @@ class RandomActivationByBreed(RandomActivation):
                 if len(ded.columns)<3:
                     break
                 else:
-                # print("im")
-                # print(im)
+                    print("im")
+                    print(im)
+                ###########
                     da = ded.iloc[:,im]
                     da = da[da.notna()]
                     da = da.tolist()
                     objcts.append(da)
-
 
             for itms in objcts:
                 # print(itms)
@@ -115,7 +115,7 @@ class RandomActivationByBreed(RandomActivation):
 
                 # confirm output
                 # print(output1)
-                print("Task Executed {}".format(threading.current_thread()))
+                # print("Task Executed {}".format(threading.current_thread()))
 
 
     def get_breed_count(self, breed_class):
