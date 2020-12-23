@@ -2,12 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scipy.integrate import simps
-from numpy import trapz
-from itertools import count
-
-from matplotlib.animation import FuncAnimation
-
 from mpl_toolkits import mplot3d
 import random
 
@@ -59,9 +53,6 @@ def sauropod_neighbors():
     df = df.reset_index()
     df.columns =["step_no","allosaurs_at_carcass"]
     print("allosaurs at carcasses:")
-    print(df)
-    print(df[df["step_no"]=="91"])
-    print(df[df["step_no"]==91])
     return df
 
 def sauropod_data():
@@ -138,8 +129,8 @@ def total_goats():
     # print(ttl_allsr)
     return ttl
 
-def goat_reprd_true():
-    df = pd.read_csv("goat_data_sheet.csv")
+def reprd_true(fle):
+    df = pd.read_csv(fle)
 
     print(df.head())
 
@@ -151,14 +142,29 @@ def goat_reprd_true():
 
     print(dft)
 
+def eat_true(fle):
+    df = pd.read_csv(fle)
+
+    print(df.head())
+
+    dft = df[df["eat"]==True]
+    print(len(df.index))
+    print(len(dft.index))
+
+    print(df["unique_id"].nunique())
+
+    print(dft[["initial_energy","resulting_energy","age","eat","step_no"]])
+
+
 def goat_samples():
     df = pd.read_csv("goat_data_sheet.csv")
+    df = df.head(20)
 
     df=df.drop_duplicates(['unique_id'])
 
-    df = df.sample(frac=.05)
+    df = df.sample(frac=.01)
 
-    return df["unique_id"].tolist()
+    print(df["unique_id"].tolist())
 
 def total_carcasses():
     df = pd.read_csv("sheep_data_sheet.csv")
@@ -196,6 +202,7 @@ def max_cmrsrs():
     # print(df.columns)
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","count","animal"]
+    print(df["count"].max())
     return df["count"].max()
 
 def max_carcasses():
@@ -203,8 +210,9 @@ def max_carcasses():
     df = df.groupby(["step_no"]).count()
     df = df.reset_index()
 
-    df =df[["step_no","unique_id","animal"]]
-    df.columns = ["step_no","count","animal"]
+    df =df[["step_no","unique_id"]]
+    df.columns = ["step_no","count"]
+    print(df["count"].max())
     return df["count"].max()
 
 def day_steps():
@@ -246,13 +254,24 @@ def plot_allsr_vs_carcass(f_pth):
     df["animal"]="allosaur-scavengers"
     df =df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","allosaur-scavengers","animal"]
-    print(df)
-    print(df[df["step_no"]==91])
-    print(df[df["step_no"]==1])
+    # print(df)
+    # print(df[df["step_no"]==91])
+    # print(df[df["step_no"]==1])
     # df = df.groupby(["unique_id"]).sum() <== this is maybe good to see how each allosaur fared
 
     df_saurp = sauropod_data()
     print("carcasses")
+    print(df_saurp["carcasses"])
+
+    for unit in df_saurp.index:
+        df_saurp["carcasses"][unit] = df_saurp["carcasses"][unit]  * random.uniform(.2,2.2)
+
+    df_saurp["carcasses"] = df_saurp["carcasses"].round()
+    df_saurp["carcasses"] = df_saurp["carcasses"].rolling(window=11).mean()
+
+
+    # df_saurp["carcasses"] = df_saurp['carcasses'].values * random.uniform(.7,3.2)
+    print(df_saurp["carcasses"])
     print(df_saurp)
 
     df_cmr = cmrsrs_data()
@@ -292,7 +311,7 @@ def plot_allsr_vs_carcass(f_pth):
     df.plot(kind="line",y="allosaur-scavengers",ax=ax,color="#e6178e")#00adb5
     neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="#6a17e6")
     df_srph.plot(kind="line",y="allosaur-predators",ax=ax,color="#17e68a")
-    df_cmr.plot(kind="line",y="living-sauropods",ax=ax, color="#0254a1")
+    # df_cmr.plot(kind="line",y="living-sauropods",ax=ax, color="#0254a1")
     df_saurp.plot(kind="line",y="carcasses",ax=ax,color="#e68a17")
 
     ax.set_xlabel("Day")
@@ -312,7 +331,10 @@ def pop_check():
     df["animal"]="carcasses"
     df = df[["step_no","unique_id","animal"]]
     df.columns = ["step_no","carcasses","animal"]
-    print(df)
+
+
+
+    df5 = sauropod_neighbors()
 
     """drop duplicates keep first uniquq_id to get the real distribution of animal carcass sizes"""
 
@@ -325,6 +347,8 @@ def pop_check():
     df2["animal"]="carnosaur-scavengers"
     df2 = df2[["step_no","unique_id","animal"]]
     df2.columns = ["step_no","carnosaur-scavengers","animal"]
+    print("MINIMUM")
+    print(df2["carnosaur-scavengers"].nsmallest(10).iloc[-1])
     #
     # df2["carnosaur-scavengers"] = df2.index
     # # df2.columns = ["step_no","carnosaur-scavengers"
@@ -336,7 +360,7 @@ def pop_check():
     df3 = df3.reset_index()
     df3 = df3[["step_no","unique_id"]]
     df3.columns = ["step_no","living-sauropods"]
-    print(df3)
+    # print(df3)
 
     df4 = pd.read_csv("coyote_data_sheet.csv")
     df4 = df4.groupby(["step_no"]).count()
@@ -344,12 +368,21 @@ def pop_check():
     df4 = df4[["step_no","unique_id"]]
     df4.columns = ["step_no","carnosaur-predators"]
     # print(df3.head())
+
+    scavs = np.array(df2["carnosaur-scavengers"].tolist())
+
+    minimas = (np.diff(np.sign(np.diff(scavs))) > 0).nonzero()[0] + 1
     # # #
     fig, ax = plt.subplots()
+
     df.plot(kind="line",y="carcasses",ax=ax,color="orange")
     df2.plot(kind="line",y="carnosaur-scavengers",ax=ax,color="blue")
-    df3.plot(kind="line",y="living-sauropods",ax=ax,color="green")
-    df4.plot(kind="line",y="carnosaur-predators",ax=ax,color="green")
+    # df3.plot(kind="line",y="living-sauropods",ax=ax,color="pink")
+    df4.plot(kind="line",y="carnosaur-predators",ax=ax,color="black")
+    df5.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="green")
+
+    for minima in minimas:
+        plt.plot(df2.iloc[minima]["carnosaur-scavengers"], marker="o")
     plt.show()
     # df = df[df["unique_id"]==1]
     # print(df.loc[df["unique_id"]==1,"initial_energy"].head(1).item())
@@ -365,10 +398,20 @@ if __name__=="__main__":
 
    # asyn execution of lambda
 
-   # distribution()
    # pop_check()
+
+   eat_true("wolf_data_sheet.csv")
+   eat_true("coyote_data_sheet.csv")
+
+   # reprd_true("wolf_data_sheet.csv")
+   #
+   # max_cmrsrs()
+   # max_carcasses()
+   # reprd_true("coyote_data_sheet.csv")
+
    # avg_size()
-   goat_samples()
+   # goat_samples()
+   # goat_samples()
 
 
 

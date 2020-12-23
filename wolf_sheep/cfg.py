@@ -4,7 +4,7 @@ import subprocess
 import os
 import numpy as np
 import random
-
+import pandas as pd
 
 def dimensions():
     """ if this is 50x50, dimesnions = 50"""
@@ -12,7 +12,7 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 45
+    fd = 42.5
     return fd
 
 def radyis():
@@ -25,23 +25,23 @@ def fmr_cost():
     return c
 
 def initial_carcs():
-    c = 10
-    return 3
+    c = 3
+    return c
 
 def initial_allsrs():
-    a = 34
+    a = 30
     return a
 
 def initial_srphs():
-    a = 34
+    a = 30
     return a
 
 def initial_cmrser():
-    a = 14
+    a = 21
     return a
 
 def saurp_mass():
-    m = 45000
+    m = 5000
     return m
 
 def allsr_reprd_rte():
@@ -55,12 +55,18 @@ def goat_reprd_rte():
 
 def saurp_crcs_apprnce_rate():
 
+    # df = pd.read_csv("sheep_data_sheet.csv")
+    #
+    # dys = df["step_no"].nunique()
+    # anm = df["unique_id"].nunique()
+
     """ user df.sample(frac=.05) to get 3 random rows
         then kill n sauropods to make a 5% mortality / cycle"""
 
     """.85 per day"""
-    # r = .99
-    r = random.uniform(.6,.8)
+    # # r = .99
+    r = random.uniform(.4,.99)
+    # return dys/anm
     return r
 
 def age_limit():
@@ -68,7 +74,7 @@ def age_limit():
     return r
 
 def goat_size_at_birth():
-    vn = np.random.uniform(1,45000,10)
+    vn = np.random.uniform(1,5000,9)
     """the first argument is mean center of the distribution, eg 20
         the next argument is scale, so if 1 it is normal dist between 19 and 21.
         last arg is length of the list"""
@@ -82,7 +88,7 @@ def goat_size_at_birth():
     # print("random")
     # print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])[0])
 
-    return random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15])[0]
+    return random.choices(vn,[.15,.15,.1,.1,.05,.05,.05,.17,.18])[0]
     # print(random.choices(vn,[.15,.15,.1,.1,.05,.06,.04,.04,.15,.15]))
 
 
@@ -93,7 +99,7 @@ metab_dkt = {9.04   :"1000kg_varanid"
             ,18     :"1000kg_bird"
             ,28     :"2000kg_bird"
             ,17.17  :"1000kg_mammal"
-            ,28.57  :"2000kg_mammal"}
+            ,28.57  :"2000kg_mammal"} #2000*2339 = 4,678,000/490,000 = 9.55 kg/ha, too high
     # """<== notes:
     #    Gene A - max between 1500 and 1750,
     #    Gene B - max between 1600 and 2200 kg.
@@ -108,7 +114,7 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs
     """extinct=TRUE if days didn't reach 365
        competition = TRUE if multiple phenotypes compete for resources"""
 
-    thrtcl_max_allsrs =  ((saurp_mass * totl_crcs)/365)/fmr_cost
+    thrtcl_max_allsrs =  ((avg_carcass_size * totl_crcs)/365)/fmr_cost
     txt = "Results\n"+\
     "dimensions                     : "+str(dmnsn)+"x"+str(dmnsn)+" squares at 1km each\n"+\
     "area                           : "+str(dmnsn * dmnsn)+ "sq km\n"+\
@@ -165,9 +171,9 @@ def summary(dmnsn, wolf_gn, rdius, fmr_cost, intl_crcs
     #
     subprocess.call("mkdir "+new_path, shell=True)
     #"/Users/cameronpahl/Documents/Science:Class/2020_Rewrite_citations/results/04-vrnd-2k-test/figure_1.png"
-    "45000kg_saurp-extinct-FALSE-competition.txt"
-    f       = open(new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE-seasons-TRUE-sr-"+str(rdius)+".txt","w")
-    fg      =      new_path+"/"+str(saurp_mass)+"kg_saurp-extinction-"+extinction+"-competition-FALSE-seasons-TRUE-sr-"+str(rdius)+".png"
+    # "45000kg_saurp-extinct-FALSE-competition.txt"
+    f       = open(new_path+"/"+str(saurp_mass)+"_kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-FALSE-sr-"+str(rdius)+".txt","w")
+    fg      =      new_path+"/"+str(saurp_mass)+"_kg_saurp-extinction-"+extinction+"-competition-TRUE-seasons-FALSE-sr-"+str(rdius)+".png"
     print(fg)
     f.write(txt)
     pt.plot_allsr_vs_carcass(fg)

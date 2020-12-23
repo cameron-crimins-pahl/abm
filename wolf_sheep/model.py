@@ -159,7 +159,7 @@ class WolfSheep(Model):
             self.grid.place_agent(goat, (x, y))
             self.schedule.add(goat)
 
-        # Create coyotes
+        # # Create coyotes
         for i in range(self.initial_coyotes):
             x = self.random.randrange(self.width)
             y = self.random.randrange(self.height)
@@ -230,11 +230,11 @@ class WolfSheep(Model):
 
 
 if __name__=="__main__":
-    #
-    # md = WolfSheep()
-    #
-    # for itms in range(365):
-    #     md.step()
+
+    md = WolfSheep()
+
+    for itms in range(365):
+        md.step()
 
     # pt.sauropod_neighbors()
     # pt.plot_allsr_vs_carcass()

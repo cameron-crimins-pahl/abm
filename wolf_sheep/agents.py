@@ -4,7 +4,25 @@ from random_walk import RandomWalker
 import cfg
 ###
 # from wolf_sheep.random_walk import RandomWalker
-# import wolf_sheep.cfg as cfg
+# # import wolf_sheep.cfg as cfg
+
+
+#  Aric A. Hagberg, Daniel A. Schult and Pieter J. Swart, “Exploring network structure, dynamics, and function using NetworkX”, in Proceedings of the 7th Python in Science Conference (SciPy2008), Gäel Varoquaux, Travis Vaught, and Jarrod Millman (Eds), (Pasadena, CA USA), pp. 11–15, Aug 2008
+
+# Harris, C.R., Millman, K.J., van der Walt, S.J. et al. Array programming with NumPy. Nature 585, 357–362 (2020). DOI: 0.1038/s41586-020-2649-2. (Publisher link).
+
+# https://doi.org/10.5281/zenodo.3509134
+
+
+# Kazil J., Masad D., Crooks A. (2020) Utilizing Python for Agent-Based Modeling: The Mesa Framework. In: Thomson R., Bisgin H., Dancy C., Hyder A., Hussain M. (eds) Social, Cultural, and Behavioral Modeling. SBP-BRiMS 2020. Lecture Notes in Computer Science, vol 12268. Springer, Cham. http://doi-org-443.webvpn.fjmu.edu.cn/10.1007/978-3-030-61255-9_30
+
+# Crump, M. (2010). Mysteries of the Komodo Dragon: The Biggest, Deadliest Lizard Gives Up Its Secrets (Illustrated ed.). Boyds Mills Press.
+#
+#
+# National Park Service. (2014, October 1). Bear Series, Part One: A Bear’s Sense of Smell - Yosemite National Park (U.S. National Park Service). https://www.nps.gov/yose/blogs/bear-series-part-one-a-bears-sense-of-smell.htm
+#
+#
+# Nowak, R. M., & Wilson, D. E. (1999). Walker’s Mammals of the World (2-Volume Set) (6th ed.). Johns Hopkins University Press.
 
 
 import pandas as pd
@@ -137,41 +155,42 @@ class Sheep(RandomWalker):
         it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
         """
         print("day "+str(days))
-        # if days > 60 and days < 120:
-        #     print("low yield season")
-        #     if carcs_per_day(nt,days) < (cfg.saurp_crcs_apprnce_rate()*5):
-        #
-        #             print("CARCS PER DAY")
-        #             print(carcs_per_day(nt,days))
-        #
-        #             """if the carcass hasn't reproduced yet, make a new carcass
-        #                otherwise collect the data and do nothing"""
-        #
-        #             rprd="true"
-        #
-        #
-        #             """i might need to make this produce like 2 carcasses per day
-        #                based on 100k kg average carrion production per day.
-        #                if only 5 die every year
-        #
-        #                if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
-        #                I'll need to do it this way to demonstrate algebraic supply demand
-        #                but
-        #                """
-        #             # self.nwnrg = random.randrange(20000,45000)
-        #
-        #             n_x = random.randrange(cfg.dimensions())
-        #             n_y = random.randrange(cfg.dimensions())
-        #
-        #             npos = (n_x,n_y)
-        #
-        #             lamb = Sheep(self.model.next_id(), npos, self.model, self.moore, 1)
-        #
-        #             self.model.grid.place_agent(lamb, npos)
-        #
-        #             self.model.schedule.add(lamb)
-        #
-        #             print("new lamb position = "+str(npos))
+        if days > 1 and days < 365:
+            # print("low yield season")
+            if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
+            # if carcs_per_day(nt,days) < (cfg.saurp_crcs_apprnce_rate()*5):
+
+                    print("CARCS PER DAY")
+                    print(carcs_per_day(nt,days))
+
+                    """if the carcass hasn't reproduced yet, make a new carcass
+                       otherwise collect the data and do nothing"""
+
+                    rprd="true"
+
+
+                    """i might need to make this produce like 2 carcasses per day
+                       based on 100k kg average carrion production per day.
+                       if only 5 die every year
+
+                       if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
+                       I'll need to do it this way to demonstrate algebraic supply demand
+                       but
+                       """
+                    # self.nwnrg = random.randrange(20000,45000)
+
+                    n_x = random.randrange(cfg.dimensions())
+                    n_y = random.randrange(cfg.dimensions())
+
+                    npos = (n_x,n_y)
+
+                    lamb = Sheep(self.model.next_id(), npos, self.model, self.moore, 1)
+
+                    self.model.grid.place_agent(lamb, npos)
+
+                    self.model.schedule.add(lamb)
+
+                    print("new lamb position = "+str(npos))
         # elif 1 < days < 365:
         #     if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
         #
@@ -352,7 +371,7 @@ class Wolf(RandomWalker):
         een = random.random()
         if een < cfg.allsr_reprd_rte():
 
-            # print("line 320, random.random()= "+str(een)+" rprd rate "+str(cfg.allsr_reprd_rte()))
+            print("line 320, random.random()= "+str(een)+" rprd rate "+str(cfg.allsr_reprd_rte()))
             """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
             or
             reproduce if step is between 275-280 for breeding season
@@ -517,7 +536,7 @@ class Coyote(RandomWalker):
         """ life cost is 9kg / day for 1000kg varanid metabolism"""
         self.energy = self.energy - cfg.fmr_cost()
 
-
+        eat="false"
         nw_nrg      = self.energy
         rprd        = "false"
         """ it costs self.energy per day to live fmr"""
@@ -542,10 +561,6 @@ class Coyote(RandomWalker):
             self.model.grid._remove_agent(self.pos, self)
             self.model.schedule.remove(self)
 
-        # if self.age > cfg.age_limit():
-        #     self.model.grid._remove_agent(self.pos, self)
-        #     self.model.schedule.remove(self)
-        #     # print("died of old age")
 
         if random.random() < cfg.allsr_reprd_rte():
 
@@ -571,8 +586,10 @@ class Coyote(RandomWalker):
 
                """
         else:
-            this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=2)
+
             this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
+
+            this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=2)
 
             sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
 
@@ -585,7 +602,7 @@ class Coyote(RandomWalker):
                 nbr = random.random()
 
                 if goat_to_eat.energy<3000:
-                    # print("goat_to_eat")
+                    print("goat_to_eat")
                     print(goat_to_eat.energy)
 
                     print(goat_to_eat)
@@ -594,7 +611,8 @@ class Coyote(RandomWalker):
 
                         self.energy = self.energy + self.model.wolf_gain_from_food
 
-                        killer="true"
+                        killer = "true"
+                        eat    = "true"
 
                         print(goat_to_eat)
 
@@ -666,7 +684,8 @@ class Coyote(RandomWalker):
             , "reproduced"       :[str(rprd)]
             ,"step_no"           :[str(self.model.schedule.time)]
             ,"age"               :[str(self.age)]
-            ,"killed_something"  :[str(killer)]}
+            ,"killed_something"  :[str(killer)]
+            ,"eat"               :[str(eat)]}
             # ,"dist_from_carc"   :[str(dist_f_carc)]}
         # print(dkt)
 
@@ -697,40 +716,57 @@ class Goat(RandomWalker):
 
         data = pd.read_csv("goat_data_sheet.csv")
 
-        dn=data.drop_duplicates(['unique_id'])
-        dn = dn.sample(frac=.05)
-        rndms = dn["unique_id"].tolist()
+        # ds = pd.read_csv("sheep_data_sheet.csv")
+
+        # ds = ds["unique"]
 
         da = data[data["unique_id"]==self.unique_id]
+
+        nt = data["unique_id"].nunique()
 
         self.age = len(da.index)
 
         self.random_move()
 
         nrg = self.energy
-
         nw_nrg = self.energy
 
         days = self.model.schedule.time
 
-        nt = data["unique_id"].nunique()
-
-        if self.unique_id in rndms:
-
-            self.model.grid._remove_agent(self.pos, self)
-
-            self.model.schedule.remove(self)
-
-            shp = Sheep(self.model.next_id(), self.pos, self.model, self.moore, self.energy)
-
-            self.model.grid.place_agent(shp, self.pos)
-
-            self.model.schedule.add(shp)
-
+        # if animal_per_day(ds,days) < cfg.saurp_crcs_apprnce_rate():
+            # shp = Sheep(self.model.next_id(), self.pos, self.model, self.moore, self.energy)
+            #
+            # self.model.grid.place_agent(shp, self.pos)
+            #
+            # self.model.schedule.add(shp)
+            #
+            # self.model.grid._remove_agent(self.pos, self)
+            #
+            # self.model.schedule.remove(self)
 
         if days > 0:
+
+            dn = data[data["step_no"]==self.model.schedule.time-1]
+            dn = dn.sample(n=1)
+            """probability that 5% of max die? or 5% die every day? this makes no sense"""
+            rndms = dn["unique_id"].tolist()
+
+
+
             # print(animal_per_day(nt,days))
             # if random.random() < .02:
+            if self.unique_id in rndms:
+
+                shp = Sheep(self.model.next_id(), self.pos, self.model, self.moore, self.energy)
+
+                self.model.grid.place_agent(shp, self.pos)
+
+                self.model.schedule.add(shp)
+
+                self.model.grid._remove_agent(self.pos, self)
+
+                self.model.schedule.remove(self)
+
             if animal_per_day(nt,days) < cfg.goat_reprd_rte():
 
                 rprd="true"
