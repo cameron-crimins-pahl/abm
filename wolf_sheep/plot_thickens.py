@@ -142,6 +142,21 @@ def reprd_true(fle):
 
     print(dft)
 
+
+
+def kill_true(fle):
+    df = pd.read_csv(fle)
+
+    print(df.head())
+
+    dft = df[df["killed_something"]==True]
+    print(len(df.index))
+    print(len(dft.index))
+
+    print(df["unique_id"].nunique())
+
+    print(dft[["initial_energy","resulting_energy","age","killed_something","step_no"]])
+
 def eat_true(fle):
     df = pd.read_csv(fle)
 
@@ -398,10 +413,12 @@ if __name__=="__main__":
 
    # asyn execution of lambda
 
-   # pop_check()
+   pop_check()
 
-   eat_true("wolf_data_sheet.csv")
-   eat_true("coyote_data_sheet.csv")
+   # eat_true("wolf_data_sheet.csv")
+   # eat_true("coyote_data_sheet.csv")
+   kill_true("coyote_data_sheet.csv")
+
 
    # reprd_true("wolf_data_sheet.csv")
    #

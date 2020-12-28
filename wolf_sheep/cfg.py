@@ -12,7 +12,7 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 42.5
+    fd = 43
     return fd
 
 def radyis():
@@ -41,7 +41,7 @@ def initial_cmrser():
     return a
 
 def saurp_mass():
-    m = 5000
+    m = 45000
     return m
 
 def allsr_reprd_rte():
@@ -50,7 +50,7 @@ def allsr_reprd_rte():
 
 def goat_reprd_rte():
     # m = .02
-    m = random.uniform(15,18)
+    m = random.uniform(12,14)
     return m
 
 def saurp_crcs_apprnce_rate():
@@ -74,7 +74,7 @@ def age_limit():
     return r
 
 def goat_size_at_birth():
-    vn = np.random.uniform(1,5000,9)
+    vn = np.random.uniform(1,45000,9)
     """the first argument is mean center of the distribution, eg 20
         the next argument is scale, so if 1 it is normal dist between 19 and 21.
         last arg is length of the list"""

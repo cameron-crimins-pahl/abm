@@ -155,42 +155,42 @@ class Sheep(RandomWalker):
         it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
         """
         print("day "+str(days))
-        if days > 1 and days < 365:
-            # print("low yield season")
-            if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
-            # if carcs_per_day(nt,days) < (cfg.saurp_crcs_apprnce_rate()*5):
-
-                    print("CARCS PER DAY")
-                    print(carcs_per_day(nt,days))
-
-                    """if the carcass hasn't reproduced yet, make a new carcass
-                       otherwise collect the data and do nothing"""
-
-                    rprd="true"
-
-
-                    """i might need to make this produce like 2 carcasses per day
-                       based on 100k kg average carrion production per day.
-                       if only 5 die every year
-
-                       if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
-                       I'll need to do it this way to demonstrate algebraic supply demand
-                       but
-                       """
-                    # self.nwnrg = random.randrange(20000,45000)
-
-                    n_x = random.randrange(cfg.dimensions())
-                    n_y = random.randrange(cfg.dimensions())
-
-                    npos = (n_x,n_y)
-
-                    lamb = Sheep(self.model.next_id(), npos, self.model, self.moore, 1)
-
-                    self.model.grid.place_agent(lamb, npos)
-
-                    self.model.schedule.add(lamb)
-
-                    print("new lamb position = "+str(npos))
+        # if days > 1 and days < 365:
+        #     # print("low yield season")
+        #     if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
+        #     # if carcs_per_day(nt,days) < (cfg.saurp_crcs_apprnce_rate()*5):
+        #
+        #             print("CARCS PER DAY")
+        #             print(carcs_per_day(nt,days))
+        #
+        #             """if the carcass hasn't reproduced yet, make a new carcass
+        #                otherwise collect the data and do nothing"""
+        #
+        #             rprd="true"
+        #
+        #
+        #             """i might need to make this produce like 2 carcasses per day
+        #                based on 100k kg average carrion production per day.
+        #                if only 5 die every year
+        #
+        #                if 1.5 animals died per day at 45000kg each, that would be avg 180kg per day
+        #                I'll need to do it this way to demonstrate algebraic supply demand
+        #                but
+        #                """
+        #             # self.nwnrg = random.randrange(20000,45000)
+        #
+        #             n_x = random.randrange(cfg.dimensions())
+        #             n_y = random.randrange(cfg.dimensions())
+        #
+        #             npos = (n_x,n_y)
+        #
+        #             lamb = Sheep(self.model.next_id(), npos, self.model, self.moore, 1)
+        #
+        #             self.model.grid.place_agent(lamb, npos)
+        #
+        #             self.model.schedule.add(lamb)
+        #
+        #             print("new lamb position = "+str(npos))
         # elif 1 < days < 365:
         #     if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
         #
@@ -589,7 +589,7 @@ class Coyote(RandomWalker):
 
             this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
 
-            this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=2)
+            this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
 
             sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
 
@@ -607,7 +607,7 @@ class Coyote(RandomWalker):
 
                     print(goat_to_eat)
 
-                    if nbr < .25:
+                    if nbr < .35:
 
                         self.energy = self.energy + self.model.wolf_gain_from_food
 
@@ -628,7 +628,7 @@ class Coyote(RandomWalker):
 
                         nw_nrg = self.energy
 
-                    elif nbr >= .3 and nbr <= .4:
+                    elif nbr >= .4 and nbr <= .5:
 
                         self.model.grid._remove_agent(self.pos, self)
 
