@@ -150,8 +150,8 @@ def kill_true(fle):
     print(df.head())
 
     dft = df[df["killed_something"]==True]
-    print(len(df.index))
-    print(len(dft.index))
+    # print(len(df.index))
+    # print(len(dft.index))
 
     print(df["unique_id"].nunique())
 
@@ -160,7 +160,7 @@ def kill_true(fle):
 def eat_true(fle):
     df = pd.read_csv(fle)
 
-    print(df.head())
+    # print(df.head())
 
     dft = df[df["eat"]==True]
     print(len(df.index))
@@ -254,6 +254,17 @@ def crc_appearance_rate():
     print(df)
 
 
+def sheep_eaten():
+    df = pd.read_csv("sheep_data_sheet.csv")
+
+
+    print(df[df["unique_id"]=="56"])
+    df =df[df["unique_id"]==56]
+    print(df)
+
+    return df.to_csv("test_test_test.csv")
+
+
 
 # def plot_allsr_vs_carcass():
 def plot_allsr_vs_carcass(f_pth):
@@ -324,7 +335,7 @@ def plot_allsr_vs_carcass(f_pth):
              ,"allosaur-predators"   : "#17e68a"}
 
     df.plot(kind="line",y="allosaur-scavengers",ax=ax,color="#e6178e")#00adb5
-    neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="#6a17e6")
+    # neighbs.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="#6a17e6")
     df_srph.plot(kind="line",y="allosaur-predators",ax=ax,color="#17e68a")
     # df_cmr.plot(kind="line",y="living-sauropods",ax=ax, color="#0254a1")
     df_saurp.plot(kind="line",y="carcasses",ax=ax,color="#e68a17")
@@ -362,8 +373,8 @@ def pop_check():
     df2["animal"]="carnosaur-scavengers"
     df2 = df2[["step_no","unique_id","animal"]]
     df2.columns = ["step_no","carnosaur-scavengers","animal"]
-    print("MINIMUM")
-    print(df2["carnosaur-scavengers"].nsmallest(10).iloc[-1])
+    # print("MINIMUM")
+    # print(df2["carnosaur-scavengers"].nsmallest(10).iloc[-1])
     #
     # df2["carnosaur-scavengers"] = df2.index
     # # df2.columns = ["step_no","carnosaur-scavengers"
@@ -391,7 +402,7 @@ def pop_check():
     fig, ax = plt.subplots()
 
     df.plot(kind="line",y="carcasses",ax=ax,color="orange")
-    df2.plot(kind="line",y="carnosaur-scavengers",ax=ax,color="blue")
+    # df2.plot(kind="line",y="carnosaur-scavengers",ax=ax,color="blue")
     # df3.plot(kind="line",y="living-sauropods",ax=ax,color="pink")
     df4.plot(kind="line",y="carnosaur-predators",ax=ax,color="black")
     df5.plot(kind="line",y="allosaurs_at_carcass",ax=ax,color="green")
@@ -413,11 +424,18 @@ if __name__=="__main__":
 
    # asyn execution of lambda
 
-   pop_check()
+   print(np.random.uniform())
+
+
+
+   #
 
    # eat_true("wolf_data_sheet.csv")
-   # eat_true("coyote_data_sheet.csv")
+   eat_true("coyote_data_sheet.csv")
    kill_true("coyote_data_sheet.csv")
+   #
+   sheep_eaten()
+   pop_check()
 
 
    # reprd_true("wolf_data_sheet.csv")

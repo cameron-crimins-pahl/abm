@@ -19,8 +19,8 @@ def f(ob):
         # print("stepped-function",ob)
         ob.step()
     except Exception as e:
-        print("error",ob)
-        print(e)
+        print("error",ob.age,ob.unique_id,ob)
+
 
 class RandomActivationByBreed(RandomActivation):
     """
@@ -81,8 +81,7 @@ class RandomActivationByBreed(RandomActivation):
                 if len(ded.columns)<3:
                     break
                 else:
-                    print("im")
-                    print(im)
+                    print("im", im)
                 ###########
                     da = ded.iloc[:,im]
                     da = da[da.notna()]

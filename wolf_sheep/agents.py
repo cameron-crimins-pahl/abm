@@ -4,7 +4,7 @@ from random_walk import RandomWalker
 import cfg
 ###
 # from wolf_sheep.random_walk import RandomWalker
-# # import wolf_sheep.cfg as cfg
+# import wolf_sheep.cfg as cfg
 
 
 #  Aric A. Hagberg, Daniel A. Schult and Pieter J. Swart, “Exploring network structure, dynamics, and function using NetworkX”, in Proceedings of the 7th Python in Science Conference (SciPy2008), Gäel Varoquaux, Travis Vaught, and Jarrod Millman (Eds), (Pasadena, CA USA), pp. 11–15, Aug 2008
@@ -55,7 +55,7 @@ class Sheep(RandomWalker):
         self.energy = cfg.goat_size_at_birth()
 
 
-        # print("sheep energy is "+ str(self.energy))
+        # print("sheep energy is "+ str(self.energy),str(self.unique_id))
         """the sheep's lifespan is len(dfs[dfs["unique_id"]==unique_id])"""
 
     def step(self):
@@ -75,7 +75,7 @@ class Sheep(RandomWalker):
 
         da = data[data["unique_id"]==self.unique_id]
 
-        print("init_mass")
+        # print("init_mass")
 
         if len(da.index) <1:
             init_mass = self.energy
@@ -84,7 +84,7 @@ class Sheep(RandomWalker):
 
             init_mass = da.loc[da["unique_id"]==self.unique_id,"initial_energy"].head(1).item()
 
-        print(init_mass)
+        # print(init_mass)
 
         self.age = len(da.index)
         """
@@ -98,7 +98,7 @@ class Sheep(RandomWalker):
 
         nrg = self.energy
 
-        self.energy *= decay_equation(self.age)
+        self.energy = self.energy * decay_equation(self.age)
 
         nw_nrg = self.energy
 
@@ -111,9 +111,14 @@ class Sheep(RandomWalker):
            and I need to make them stay at a carcass once they find  it,"""
         this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
 
-        wlvs = [obj for obj in this_cell if isinstance(obj, Wolf)]
+        wlvs = [obj for obj in this_cell if isinstance(obj, Coyote)]
 
-        if self.energy < np.random.uniform(0,init_mass*.15):
+        print("wolves",wlvs)
+
+        # if len(wlvs) >0:
+        #     print(nw_nrg,self.unique_id)
+
+        if self.energy < init_mass*.25:
 
             """9000 kg is 20% of the original mass of the carcass
                when it becomes effectively useless to local animals.
@@ -154,7 +159,6 @@ class Sheep(RandomWalker):
         also the situation with adults is that if the allosaur hits an adult more than 2x its own mass
         it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
         """
-        print("day "+str(days))
         # if days > 1 and days < 365:
         #     # print("low yield season")
         #     if carcs_per_day(nt,days) < cfg.saurp_crcs_apprnce_rate():
@@ -303,7 +307,7 @@ class Wolf(RandomWalker):
 
            """
 
-        self.energy +=200
+        self.energy +=600
         """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
 
     def step(self):
@@ -349,7 +353,7 @@ class Wolf(RandomWalker):
         this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
         cl_shp = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=2)
         # this_cell = self.model.grid.get_cell_list_contents([self.pos])
-        # print("close neighbors line 337")
+        print("close neighbors line 337",cl_shp)
         # print(cl_shp)
 
         """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
@@ -360,7 +364,7 @@ class Wolf(RandomWalker):
         sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
 
         clsshp = [objn for objn in cl_shp if isinstance(objn, Sheep)]
-        # print("close sheep 1")
+        print("close sheep 1",clsshp)
         # print(clsshp)
 
         # nw_nrg = self.energy
@@ -425,9 +429,8 @@ class Wolf(RandomWalker):
             clsst_shp = arr[1][0]
 
             sheep_to_eat = sheep[clsst_shp]
-            # print("close sheep:")
-            # print(clsst_shp)
-            # print(sheep_to_eat)
+            print("close sheep:",clsst_shp,sheep_to_eat)
+
 #
             # print("SHEEP TO TARGET COORDINATES:")
             # print(self.pos)
@@ -520,7 +523,7 @@ class Coyote(RandomWalker):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
 
-        self.energy +=200
+        self.energy +=900
         """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
 
     def step(self):
@@ -551,7 +554,7 @@ class Coyote(RandomWalker):
 
         sheep=[]
         goats=[]
-        print("day")
+        # print("coyote day line 554",self.unique_id)
 
         print(str(self.model.schedule.time))
 
@@ -562,14 +565,14 @@ class Coyote(RandomWalker):
             self.model.schedule.remove(self)
 
 
-        if random.random() < cfg.allsr_reprd_rte():
-
-            """new wolves start with 1+x energy"""
+        if np.random.random() < cfg.allsr_reprd_rte():
 
             n_x = random.randrange(cfg.dimensions())
             n_y = random.randrange(cfg.dimensions())
 
             npos = (n_x,n_y)
+
+            print("coyote npos",npos,"reproduced")
 
             cb = Coyote(self.model.next_id(), npos, self.model, self.moore, 1)
 
@@ -585,97 +588,116 @@ class Coyote(RandomWalker):
                the other thing is that giant rotting sauropods must have smelled awful
 
                """
-        else:
 
-            this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
+            # print("coyote cells:",self.unique_id)
 
-            this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
+        this_cell       = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=cfg.radyis())
 
-            sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
+        # print("this cell:",self.unique_id, this_cell)
 
-            goats = [obj for obj in this_cell_close if isinstance(obj, Goat)]
+        this_cell_close = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
 
-            if len(goats) > 0:
+        # print("this cell close",self.unique_id, this_cell_close)
+        sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
+        goats = [obj for obj in this_cell_close if isinstance(obj, Goat)]
+        print("goats",self.unique_id,goats,len(goats))
 
-                goat_to_eat = self.random.choice(goats)
+        if len(goats) > 0:
 
-                nbr = random.random()
+            goat_to_eat = self.random.choice(goats)
 
-                if goat_to_eat.energy<3000:
-                    print("goat_to_eat")
-                    print(goat_to_eat.energy)
+            nbr = np.random.uniform()
 
-                    print(goat_to_eat)
+            if goat_to_eat.energy<cfg.prey_size_max():
 
-                    if nbr < .35:
+                if nbr < .35:
 
-                        self.energy = self.energy + self.model.wolf_gain_from_food
-
-                        killer = "true"
-                        eat    = "true"
-
-                        print(goat_to_eat)
-
-                        self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
-
-                        self.model.schedule.remove(goat_to_eat)
-
-                        shp = Sheep(self.model.next_id(), self.pos, goat_to_eat.model, goat_to_eat.moore, goat_to_eat.energy)
-
-                        self.model.grid.place_agent(shp, self.pos)
-
-                        self.model.schedule.add(shp)
-
-                        nw_nrg = self.energy
-
-                    elif nbr >= .4 and nbr <= .5:
-
-                        self.model.grid._remove_agent(self.pos, self)
-
-                        self.model.schedule.remove(self)
-
-            elif len(sheep) > 0:
-
-                """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
-                    self.model.grid.get_neighbors is better
-                2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
-                and I need to make them stay at a carcass once they find  it,"""
-
-                nw_nrg = self.energy
-
-                """this captures the list of all sheep objects within 10 step radius of the wolf
-                        wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
-
-                cls_shp = []
-
-                for ps in sheep:
-                    """this is the list of sheep object coordinates the wolf can detect based on detection radius=10 in line 217"""
-                    cls_shp.append(ps.pos)
-
-                tree = spatial.KDTree(cls_shp)
-
-                arr = tree.query([self.pos])
-
-                clsst_shp = arr[1][0]
-
-                sheep_to_eat = sheep[clsst_shp]
-
-                to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
-
-                self.non_random_move(to_trgt)
-
-                start_e = sheep_to_eat.energy
-
-                """this selects the random sheep to be consumed """
-
-                if self.pos == sheep_to_eat.pos:
                     self.energy = self.energy + self.model.wolf_gain_from_food
-                    sheep_to_eat.energy = sheep_to_eat.energy + self.model.wolf_gain_from_food
+
+
+                    print(nbr,"-------KILLER=TRUE------",self.unique_id)
+
+                    killer = "true"
+
+                    eat    = "true"
+
+                    # print("goat_to_eat ",goat_to_eat,self.unique_id,self.step_no)
+                    shp = Sheep(self.model.next_id(), self.pos, goat_to_eat.model, goat_to_eat.moore, goat_to_eat.energy)
+
+                    self.model.grid.place_agent(shp, self.pos)
+
+                    self.model.schedule.add(shp)
+
+                    self.model.grid._remove_agent(goat_to_eat.pos, goat_to_eat)
+
+                    self.model.schedule.remove(goat_to_eat)
+
                     nw_nrg = self.energy
 
-            else:
-                self.random_move()
-                rprd = "false"
+                elif nbr >= .85 and nbr <= .89:
+
+                    self.model.grid._remove_agent(self.pos, self)
+
+                    self.model.schedule.remove(self)
+
+        print(self.unique_id,"breaker")
+        # print("sheep",self.unique_id,sheep,len(sheep))
+
+        if len(sheep) > 0:
+
+            print("--SHEEP-TARGETS------------ ",self.unique_id,len(sheep))
+
+            """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
+                self.model.grid.get_neighbors is better
+            2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
+            and I need to make them stay at a carcass once they find  it,"""
+
+            nw_nrg = self.energy
+
+            """this captures the list of all sheep objects within 10 step radius of the wolf
+                    wolves need to go toward the closest one, and eat it, or move randomly if none are detected"""
+
+            cls_shp = []
+
+            for ps in sheep:
+                """this is the list of sheep object coordinates the consuming agent can detect"""
+                cls_shp.append(ps.pos)
+
+            tree = spatial.KDTree(cls_shp)
+
+            arr = tree.query([self.pos])
+
+            clsst_shp = arr[1][0]
+
+            sheep_to_eat = sheep[clsst_shp]
+            print("----CLOSEST SHEEP IS----",sheep_to_eat,self.unique_id,sheep_to_eat.energy)
+
+            to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
+            # print("path to target",to_trgt,sheep_to_eat.pos,sheep_to_eat.unique_id)
+
+            self.non_random_move(to_trgt)
+
+
+            start_e = sheep_to_eat.energy
+
+            """this selects the random sheep to be consumed """
+
+            if self.pos == sheep_to_eat.pos:
+
+                ldrg = sheep_to_eat.energy
+
+                self.energy = self.energy + self.model.wolf_gain_from_food
+                sheep_to_eat.energy = sheep_to_eat.energy - self.model.wolf_gain_from_food
+
+                nnnrg = sheep_to_eat.energy
+
+                nw_nrg = self.energy
+                eat="true"
+                print("----I-ATE-FOOD--------- |",nrg,nw_nrg," carcass |",ldrg,nnnrg,sheep_to_eat.unique_id)
+
+        else:
+            self.random_move()
+            rprd = "false"
 
         dkt= {"adjacent_sheep"   :[str(len(sheep))]
             , "unique_id"        :[str(self.unique_id)]
@@ -748,6 +770,8 @@ class Goat(RandomWalker):
 
             dn = data[data["step_no"]==self.model.schedule.time-1]
             dn = dn.sample(n=1)
+            # print("dn ",dn)
+
             """probability that 5% of max die? or 5% die every day? this makes no sense"""
             rndms = dn["unique_id"].tolist()
 

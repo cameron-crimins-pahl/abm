@@ -22,9 +22,11 @@ def wolf_sheep_portrayal(agent):
         # portrayal["Filled"] = "true"
         portrayal["Shape"] = "/Users/cameronpahl/projects/abm-core/wolf_sheep/resources/sheep.png"
         # https://icons8.com/web-app/433/sheep
-        # portrayal["text"] = round(agent.energy, 1)
+
         portrayal["scale"] = 0.9
-        portrayal["Layer"] = 1
+        portrayal["Layer"] = 2
+        portrayal["text"] = round(agent.energy, 1)
+        portrayal["text"] = agent.unique_id
 
     elif type(agent) is Goat:
         portrayal["Color"] = ["#0254a1"]
@@ -54,6 +56,7 @@ def wolf_sheep_portrayal(agent):
         # https://icons8.com/web-app/36821/German-Shepherd
         portrayal["scale"] = 0.9
         portrayal["Layer"] = 2
+        portrayal["text"] = agent.unique_id
         # portrayal["text"] = round(agent.energy, 1)
         portrayal["text_color"] = "Black"
 
@@ -94,7 +97,7 @@ model_params = {
         description="The rate at which wolf agents reproduce.",
     ),
     "wolf_gain_from_food": UserSettableParameter(
-        "slider", "Wolf Gain From Food Rate", 20, 1, 50
+        "slider", "Wolf Gain From Food Rate", 20, 1, 200
     ),
     "sheep_gain_from_food": UserSettableParameter(
         "slider", "Sheep Gain From Food", 4, 1, 10

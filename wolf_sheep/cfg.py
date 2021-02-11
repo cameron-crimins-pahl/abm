@@ -12,7 +12,7 @@ def dimensions():
     return dimensions
 
 def wolf_gn():
-    fd = 43
+    fd = 150
     return fd
 
 def radyis():
@@ -21,7 +21,7 @@ def radyis():
     return r
 
 def fmr_cost():
-    c = 17.04
+    c = 60
     return c
 
 def initial_carcs():
@@ -29,7 +29,7 @@ def initial_carcs():
     return c
 
 def initial_allsrs():
-    a = 30
+    a = 0
     return a
 
 def initial_srphs():
@@ -40,8 +40,12 @@ def initial_cmrser():
     a = 21
     return a
 
+def prey_size_max():
+    a = 1
+    return a
+
 def saurp_mass():
-    m = 45000
+    m = 100000
     return m
 
 def allsr_reprd_rte():
@@ -74,7 +78,7 @@ def age_limit():
     return r
 
 def goat_size_at_birth():
-    vn = np.random.uniform(1,45000,9)
+    vn = np.random.uniform(1,100000,9)
     """the first argument is mean center of the distribution, eg 20
         the next argument is scale, so if 1 it is normal dist between 19 and 21.
         last arg is length of the list"""
@@ -99,7 +103,9 @@ metab_dkt = {9.04   :"1000kg_varanid"
             ,18     :"1000kg_bird"
             ,28     :"2000kg_bird"
             ,17.17  :"1000kg_mammal"
-            ,28.57  :"2000kg_mammal"} #2000*2339 = 4,678,000/490,000 = 9.55 kg/ha, too high
+            ,28.57  :"2000kg_mammal"
+            ,66     :"8000kg_varanid"
+            ,79     :"8000kg_mammal"} #2000*2339 = 4,678,000/490,000 = 9.55 kg/ha, too high
     # """<== notes:
     #    Gene A - max between 1500 and 1750,
     #    Gene B - max between 1600 and 2200 kg.

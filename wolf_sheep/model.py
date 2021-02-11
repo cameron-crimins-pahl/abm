@@ -87,7 +87,7 @@ class WolfSheep(Model):
         width           = cfg.dimensions(),
         initial_sheep   = cfg.initial_carcs(),
         initial_wolves  = cfg.initial_allsrs(),
-        initial_coyotes = cfg.initial_allsrs(),
+        initial_coyotes = cfg.initial_srphs(),
         initial_goats   = cfg.initial_cmrser(),
         sheep_reproduce = 0.04,
         wolf_reproduce  = 0.05,
@@ -230,7 +230,7 @@ class WolfSheep(Model):
 
 
 if __name__=="__main__":
-
+    # #
     md = WolfSheep()
 
     for itms in range(365):
