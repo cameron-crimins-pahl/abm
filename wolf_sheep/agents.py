@@ -358,24 +358,10 @@ class Wolf(RandomWalker):
             sheep_to_eat = sheep[clsst_shp]
             print("close sheep:",clsst_shp,sheep_to_eat)
 
-#
-            # print("SHEEP TO TARGET COORDINATES:")
-            # print(self.pos)
-            # print(sheep_to_eat.pos)
-
-
             to_trgt = path_to_closest_sheep(self.pos,sheep_to_eat.pos)
-            # print("TO TARGET")
-            # print(self.energy)
-            # print(cls_shp)
-            # print(to_trgt)
-            # print(sheep_to_eat)
-            # print(self.pos)
 
             self.non_random_move(to_trgt)
-            # print(self.pos)
 
-            # sheep_to_eat = self.random.choice(sheep)
             """ if the sheep is NOT adjacent to the wolf square,
                 move toward it
                 else
@@ -386,25 +372,16 @@ class Wolf(RandomWalker):
 
             """make a dataframe to record the actions of each agent, if they ate, etc.  """
 
-            # print("sheep from wolf perspective has  " +str(start_e)+ " energy")
-            # """this selects the random sheep to be consumed """
-            # print("sheep to eat and etc")
             print(sheep_to_eat)
-            # print(clsshp)
-            # if sheep_to_eat in clsshp:
 
             if sheep_to_eat.pos == self.pos:
                 # print("eating a carcass")
                 eat="true"
-                # print("ate a sheep ", sheep_to_eat, clsshp)
-                # print(self.unique_id,self.energy)
-                # print(self.energy)
-                # print("gains ",self.model.wolf_gain_from_food)
+
                 self.energy = self.energy + self.model.wolf_gain_from_food
-                # print(self.unique_id,self.energy)
+
                 sheep_to_eat.energy = sheep_to_eat.energy - self.model.wolf_gain_from_food
                 nw_nrg = self.energy
-                # print(self.unique_id,nw_nrg)
 
         else:
             self.random_move()
@@ -573,11 +550,6 @@ class Coyote(RandomWalker):
         if len(sheep) > 0:
 
             print("--SHEEP-TARGETS------------ ",self.unique_id,len(sheep))
-
-            """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
-                self.model.grid.get_neighbors is better
-            2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
-            and I need to make them stay at a carcass once they find  it,"""
 
             nw_nrg = self.energy
 
