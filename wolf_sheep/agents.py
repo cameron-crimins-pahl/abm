@@ -6,25 +6,6 @@ import cfg
 # from wolf_sheep.random_walk import RandomWalker
 # import wolf_sheep.cfg as cfg
 
-
-#  Aric A. Hagberg, Daniel A. Schult and Pieter J. Swart, “Exploring network structure, dynamics, and function using NetworkX”, in Proceedings of the 7th Python in Science Conference (SciPy2008), Gäel Varoquaux, Travis Vaught, and Jarrod Millman (Eds), (Pasadena, CA USA), pp. 11–15, Aug 2008
-
-# Harris, C.R., Millman, K.J., van der Walt, S.J. et al. Array programming with NumPy. Nature 585, 357–362 (2020). DOI: 0.1038/s41586-020-2649-2. (Publisher link).
-
-# https://doi.org/10.5281/zenodo.3509134
-
-
-# Kazil J., Masad D., Crooks A. (2020) Utilizing Python for Agent-Based Modeling: The Mesa Framework. In: Thomson R., Bisgin H., Dancy C., Hyder A., Hussain M. (eds) Social, Cultural, and Behavioral Modeling. SBP-BRiMS 2020. Lecture Notes in Computer Science, vol 12268. Springer, Cham. http://doi-org-443.webvpn.fjmu.edu.cn/10.1007/978-3-030-61255-9_30
-
-# Crump, M. (2010). Mysteries of the Komodo Dragon: The Biggest, Deadliest Lizard Gives Up Its Secrets (Illustrated ed.). Boyds Mills Press.
-#
-#
-# National Park Service. (2014, October 1). Bear Series, Part One: A Bear’s Sense of Smell - Yosemite National Park (U.S. National Park Service). https://www.nps.gov/yose/blogs/bear-series-part-one-a-bears-sense-of-smell.htm
-#
-#
-# Nowak, R. M., & Wilson, D. E. (1999). Walker’s Mammals of the World (2-Volume Set) (6th ed.). Johns Hopkins University Press.
-
-
 import pandas as pd
 import numpy as np
 import os
@@ -91,7 +72,7 @@ class Sheep(RandomWalker):
         A model step. Move, then eat grass and reproduce.
 
         But for me it will be each step the sheep loses energy according to the decay equation.
-        I need to record the number of days the sheep has existed by step.
+
         """
         # self.random_move()
         living = True
@@ -102,13 +83,6 @@ class Sheep(RandomWalker):
 
         nw_nrg = self.energy
 
-        """if self.model.schedule.time between 1 and 90, it is spring
-        if between 270 and 365, reproduce"""
-
-        """i definitely need the list of adjacent wolves because i need to demonstrate that multiple wolves profit
-           from a single carcassj
-           and i can't forget to measure how many steps they take avg to find a carcass
-           and I need to make them stay at a carcass once they find  it,"""
         this_cell = self.model.grid.get_neighbors(pos=self.pos,moore=True,radius=1)
 
         wlvs = [obj for obj in this_cell if isinstance(obj, Coyote)]
@@ -122,7 +96,7 @@ class Sheep(RandomWalker):
 
             """9000 kg is 20% of the original mass of the carcass
                when it becomes effectively useless to local animals.
-               At that point, it is mostly bones and inedible elements
+               At that point, it is mostly bones and inedible elements... but realistically 9000kg would still be soo much food
                """
 
             self.model.grid._remove_agent(self.pos, self)
@@ -156,8 +130,7 @@ class Sheep(RandomWalker):
         just to see what happens to them
         when does predation become profitable ? when proportion of adults gets below a certain size?
         or when attack success is over a certain amount? I guess I'll find out
-        also the situation with adults is that if the allosaur hits an adult more than 2x its own mass
-        it autofails the hunt and maybe dies at like 80% of the time because of course a 4000 kg sauropod would be unkillable
+
         """
         # if days > 1 and days < 365:
         #     # print("low yield season")
@@ -259,42 +232,11 @@ class Wolf(RandomWalker):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
 
-        """i think my math is WAAAY wrong.
-           i think my carcass generation freq needs to be changed to
-           or maybe i roll the dice to say odds of carcass duplicating are 3 in 365"""
-
         # if self.energy>45000:
         #     self.energy =45000
         """how much energy should the wolves start with?
            should it be 1000 kg? yes
            and depending on metabolism
-
-           okay so this is good: a monitor lizard loses 0.2 % of its mass every day it goes without eating
-           after 168 days of no food, it dies, having lost 29% of its body mass.
-
-           i need to check this citation. if 0.2% of body mass is near its FMR ,
-
-           i think if the allosaur gets to 70% body mass as an ectotherm, it dies -- this might require math about how much energy is stored
-           with each consumption event... 90% energy or whatever for carnivores.  That could also be weird because the math
-           would be tough to bring above 1000 maybe?  it might be more complicated than I want to do on this round.
-
-           edit = i could possibly get raound this by setting a maximum mass on the allosaur side of things.  Maybe they hit a max mass between
-           1750 and 2000, and then have a heritability component associated with size.
-
-           Gene A - max between 1500 and 1750,
-           Gene B - max between 1600 and 2200 kg.
-           make their energy needs conditional within each object based on Nagy
-
-           Gene C - 35% chance to kill on contact of living sauropod 25% to be killed, rest of % draw
-           Gene D - 25% chance to kill on contact of living sauropod 35% to be killed, rest of % draw
-
-           no -- if the animal goes 10 consecutive days without eating it dies or if it gets to below 0 energy
-           that is pretty generous so i should do this with a range of values... even if it could only go 10 days wihtout food it dies
-
-           the more i think about this, the more the 70% body mass thing sounds good because starvation conditions are common in nature.
-           The only drawback is that if I argue the sauropods died of starvation as a primary cause of mortality, would they have less than adult mass?
-           they fattened up during good times and starved it out during bad times.  I also think that if I write seasonality component, the allosaurs
-           will need a. size
 
            this is another great citation
            Huitu, O.; Koivula, M.; Korpimäki, E.; Klemola, T. & Norrdahl, K. (2003) “Winter food supply limits growth of northern vale populations in the absence of predation”, Ecology, 84, pp. 2108-2118.
@@ -303,7 +245,7 @@ class Wolf(RandomWalker):
            starvation physiology:
            https://www.sciencedirect.com/science/article/pii/S109564331000005X?casa_token=ZrU6VR5dfeYAAAAA:1fRVw4gypP82tqjz72Rwuo6E160PMW_2ocdHRRnjSTMClCJCHklwaQIGjZXROQkqJco_ZBzIEQ
            section 1.3
-           also for bird and mammal physiology they can only go like 5 days wihtout food, arbitrary but good
+
 
            """
 
@@ -356,11 +298,6 @@ class Wolf(RandomWalker):
         print("close neighbors line 337",cl_shp)
         # print(cl_shp)
 
-        """ the given list of sheep in adjacent cells with self.model.grid.get_cell_list_contents is inaccurate.
-            self.model.grid.get_neighbors is better
-        2020 9 17 and i can't forget to measure how many steps they take avg to find a carcass
-        and I need to make them stay at a carcass once they find  it,"""
-
         sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
 
         clsshp = [objn for objn in cl_shp if isinstance(objn, Sheep)]
@@ -377,17 +314,7 @@ class Wolf(RandomWalker):
 
             print("line 320, random.random()= "+str(een)+" rprd rate "+str(cfg.allsr_reprd_rte()))
             """ reproduce if wolf energy is greater than 270 (1 month of food survival?)
-            or
-            reproduce if step is between 275-280 for breeding season
-            all of them reproduce every day for 5 days because they hatch out of eggs and a bunch of new ones appear at once?
-            sounds dumb
-
-            I think I should do the same thing I did with carcasses.
-            if the ratio of allosaurs to sauropods is lower than x , then reproduce?
-            if total allosaurs per sq km is less than x , then reproduce?
-            or should reproduction not happen?
-            where does equilibrium take place? should i be concentrating on how many allosaurs is too many?
-            how many does it take to deplete the supply, or do most sauropods disappear without allosaurs"""
+            or"""
 
 
             """self.energy/=2 divides the wolf's energy by 2 as a cost of having a cub, i don't want this because dinosaurs laid eggs"""
