@@ -71,7 +71,7 @@ class Sheep(RandomWalker):
         """
         A model step. Move, then eat grass and reproduce.
 
-        But for me it will be each step the sheep loses energy according to the decay equation.
+        each step the sheep loses energy according to the decay equation.
 
         """
         # self.random_move()
@@ -126,10 +126,7 @@ class Sheep(RandomWalker):
         else make a new carcass
         for the ones with live animals ,
         if the animal dies it creates a carcass of its size
-        i need to remmeber to make one with normally distributed animal size so like only 5 percent are full size
-        just to see what happens to them
-        when does predation become profitable ? when proportion of adults gets below a certain size?
-        or when attack success is over a certain amount? I guess I'll find out
+
 
         """
         # if days > 1 and days < 365:
@@ -234,20 +231,6 @@ class Wolf(RandomWalker):
 
         # if self.energy>45000:
         #     self.energy =45000
-        """how much energy should the wolves start with?
-           should it be 1000 kg? yes
-           and depending on metabolism
-
-           this is another great citation
-           Huitu, O.; Koivula, M.; Korpimäki, E.; Klemola, T. & Norrdahl, K. (2003) “Winter food supply limits growth of northern vale populations in the absence of predation”, Ecology, 84, pp. 2108-2118.
-
-           this paper is outstanding:
-           starvation physiology:
-           https://www.sciencedirect.com/science/article/pii/S109564331000005X?casa_token=ZrU6VR5dfeYAAAAA:1fRVw4gypP82tqjz72Rwuo6E160PMW_2ocdHRRnjSTMClCJCHklwaQIGjZXROQkqJco_ZBzIEQ
-           section 1.3
-
-
-           """
 
         self.energy +=600
         """100 energy is roughly 10 days of energy at hatch time for varanid metabolism. if the animal cant find food in 10 days it dies """
@@ -389,8 +372,6 @@ class Wolf(RandomWalker):
 
             rprd = "false"
 
-        """ if the reptile allosaur's body mass drops by 30%, it dies.
-            just as in monitor lizards"""
         idddd = str(self.unique_id)
 
         if self.energy < 1:
@@ -727,12 +708,7 @@ class GrassPatch(Agent):
     """
 
     def __init__(self, unique_id, pos, model, fully_grown, countdown):
-        """
-        Creates a new patch of grass
-        Args:
-            grown: (boolean) Whether the patch of grass is fully grown or not
-            countdown: Time for the patch of grass to be fully grown again
-        """
+
         super().__init__(unique_id, model)
         self.fully_grown = fully_grown
         self.countdown = countdown
