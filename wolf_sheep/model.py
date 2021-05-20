@@ -54,32 +54,7 @@ class WolfSheep(Model):
 
     verbose = False  # Print-monitoring
 
-    description = (
-        """A model for simulating wolf and sheep (consumer-resource) ecosystem modelling.
-        Note height and width determine the height and width of the environment, which is separate from the
-        params in server.py line 45 . They need to be the same numbers. If this is 100 x 100, then the server.py params must be 100x100
-
-        100x100 = 10k sauropods at 1/km.
-                    3000 adults = 150 die / year
-                                    0.41 / day
-
-
-        my dad says 100x100 could reasonably be 100km by 100km, but even 200km by 200km. He suggested that
-        a reasonable allosaur could easily travel 1 or more km per day and could smell a gigantic carcass from 2-10km away, i need
-        to check this with olfaction in allosaurs. but this is good.
-        now i need to know how many carcasses would reasonably appear per year in a 200x200 sized space
-        since 1-2 sauropods could have existed per square km in the most conservative estimates, that means
-        a 40,000 square km space could have supported 40,000-80,000 sauropods. Which means 12000- 24,000 adults if 30% were adults.
-        at 5% mortality that would be 600- 1200 carcasses/year. That is 3.2 per day at a constant rate, or 1.6 per day
-        if the population was half as dense.
-        I need to do this linearly, but also seasonally, which means I should do a dry season death with 80% of
-        casualties in a 3 month time span, then 20% spread through the rest of the year.
-
-
-        Don't forget to do a scatter plot of different genotypes over time? no i can just do a line graph
-        oen color for predators/scavs plus strict scavengers
-        also different colors for 20% winners vs 35% winners"""
-    )
+ 
 
     def __init__(
         self,
@@ -96,19 +71,7 @@ class WolfSheep(Model):
         grass_regrowth_time = 30,
         sheep_gain_from_food = 4,
     ):
-        """
-        Create a new Wolf-Sheep model with the given parameters.
-        Args:
-            initial_sheep: Number of sheep to start with
-            initial_wolves: Number of wolves to start with
-            sheep_reproduce: Probability of each sheep reproducing each step
-            wolf_reproduce: Probability of each wolf reproducing each step
-            wolf_gain_from_food: Energy a wolf gains from eating a sheep
-            grass: Whether to have the sheep eat grass for energy
-            grass_regrowth_time: How long it takes for a grass patch to regrow
-                                 once it is eaten
-            sheep_gain_from_food: Energy sheep gain from grass, if enabled.
-        """
+
         super().__init__()
         # Set parameters
         self.height = height
